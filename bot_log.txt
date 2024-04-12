@@ -1,0 +1,475 @@
+2024-04-12 16:23:03 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:23:12 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:23:43 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:25:34 - INFO - Iniciando el bot...
+2024-04-12 16:25:34 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:25:34 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:25:34 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:25:34 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:25:34 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:25:35 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:25:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:25:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:25:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:25:37 - INFO - No se encontraron recursos. Intentando cambiar de mapa...
+2024-04-12 16:25:37 - INFO - No se encontraron recursos. Intentando cambiar de mapa...
+2024-04-12 16:25:37 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:25:37 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:25:45 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:25:45 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:25:45 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:25:45 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:25:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:25:45 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:25:45 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:25:45 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:25:45 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:25:46 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:25:47 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:25:47 - INFO - No se encontraron recursos. Intentando cambiar de mapa...
+2024-04-12 16:25:47 - INFO - No se encontraron recursos. Intentando cambiar de mapa...
+2024-04-12 16:25:47 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:25:47 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:25:56 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:25:56 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:25:56 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:25:56 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:25:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:25:56 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:25:56 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:26:05 - INFO - Recolectado ojoIA/fresno.
+2024-04-12 16:26:05 - INFO - Recolectado ojoIA/fresno.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:26:05 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:26:06 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:26:06 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:26:06 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:26:56 - INFO - Iniciando el bot...
+2024-04-12 16:26:56 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:26:56 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:26:56 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:26:56 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:26:56 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:26:57 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:26:58 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:26:59 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:26:59 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:26:59 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:26:59 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:26:59 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:26:59 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:26:59 - INFO - No se encontraron recursos. Intentando cambiar de mapa...
+2024-04-12 16:26:59 - INFO - No se encontraron recursos. Intentando cambiar de mapa...
+2024-04-12 16:27:07 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:27:07 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:27:07 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:27:07 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:27:07 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:27:07 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:27:07 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:27:07 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:27:07 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:27:07 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:27:15 - INFO - Recolectado trigo.
+2024-04-12 16:27:15 - INFO - Recolectado trigo.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:27:16 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:27:17 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:27:18 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:27:18 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:27:18 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:27:18 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:27:18 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:27:18 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:27:26 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:27:26 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:27:26 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:27:26 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:27:26 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:27:27 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:27:28 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:27:28 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:27:36 - INFO - Recolectado ojoIA/ortiga.
+2024-04-12 16:27:36 - INFO - Recolectado ojoIA/ortiga.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:27:36 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:27:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:27:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:27:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:27:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:27:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:27:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:27:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:27:37 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:27:45 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:27:45 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:27:45 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:27:45 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:27:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:27:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:27:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:27:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:27:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:27:45 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:27:54 - INFO - Recolectado trigo.
+2024-04-12 16:27:54 - INFO - Recolectado trigo.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno3.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta1.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta2.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta3.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/castano no encontrado en ojoIA/casta4.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:27:54 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal1.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal2.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/nogal no encontrado en ojoIA/nogal3.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:27:55 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:27:56 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:27:56 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:27:56 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:27:56 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:27:56 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:27:56 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:27:56 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:27:56 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:28:04 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:28:04 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:28:04 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:28:04 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:28:04 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:28:13 - INFO - Recolectado ojoIA/fresno.
+2024-04-12 16:28:13 - INFO - Recolectado ojoIA/fresno.
+2024-04-12 16:28:21 - INFO - Recolectado ojoIA/castano.
+2024-04-12 16:28:21 - INFO - Recolectado ojoIA/castano.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga1.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga2.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga3.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga4.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/ortiga no encontrado en ojoIA/ortiga5.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:28:21 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia1.PNG.
+2024-04-12 16:28:22 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:28:22 - INFO - Recurso ojoIA/salvia no encontrado en ojoIA/salvia2.PNG.
+2024-04-12 16:28:30 - INFO - Recolectado ojoIA/nogal.
+2024-04-12 16:28:30 - INFO - Recolectado ojoIA/nogal.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro1.PNG.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro2.PNG.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro3.PNG.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro4.PNG.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:28:30 - INFO - Recurso ojoIA/hierro no encontrado en ojoIA/hierro5.PNG.
+2024-04-12 16:28:38 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:28:38 - WARNING - No se pudo cambiar de mapa. Reintentando...
+2024-04-12 16:28:39 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:28:39 - INFO - Combat indicator not found. Assuming not in combat mode.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo1.PNG.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo2.PNG.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo3.PNG.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo4.PNG.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:28:39 - INFO - Recurso trigo no encontrado en ojoIA/trigo5.PNG.
+2024-04-12 16:28:39 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:28:39 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno1.PNG.
+2024-04-12 16:28:39 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
+2024-04-12 16:28:39 - INFO - Recurso ojoIA/fresno no encontrado en ojoIA/fresno2.PNG.
