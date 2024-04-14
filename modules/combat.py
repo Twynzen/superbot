@@ -1,19 +1,20 @@
 import pyautogui as pg
-from config import COMBAT_MODE_REGION, CONFIDENCE_LEVEL
+import time
+from modules.image_processing import capture_screenshot, image_difference
+from config import COMBAT_MODE_REGION, CONFIDENCE_LEVEL,  MAP_LOCATION_DIR, WAIT_TIME
 
-def is_in_combat_mode():
-    """Determina si el bot está en combate buscando una imagen específica en la pantalla."""
-    try:
-        # Ruta a la imagen que indica que estamos en combate.
-        combat_indicator_image_path = 'ojoIA/combat_indicator.PNG'
-        
-        # Busca la imagen en la región especificada con un nivel de confianza establecido.
-        combat_indicator = pg.locateOnScreen(combat_indicator_image_path, region=COMBAT_MODE_REGION, confidence=CONFIDENCE_LEVEL)
-        
-        # Si se encuentra la imagen, devuelve True, indicando que el bot está en combate.
-        return combat_indicator is not None
 
-    except pg.ImageNotFoundException:
-        # Si no se encuentra la imagen, escribe en la consola y asume que no está en combate.
-        print("Combat indicator not found. Assuming not in combat mode.")
-        return False
+def check_combat_status():
+    """Revisa de manera indefinida si el bot está en combate, comparando capturas de pantalla con una imagen de referencia."""
+    reference_image_path = 'ojoIA/combat_indicator.PNG'
+    debug_image_path = f"{MAP_LOCATION_DIR}/combat_debug.png"
+
+    while True:
+        capture_screenshot(COMBAT_MODE_REGION, 'combat_debug.png', MAP_LOCATION_DIR)
+        # Compara la imagen de depuración con la imagen de referencia.
+        if not image_difference(debug_image_path, reference_image_path):
+            print("Combat is still active...")
+            time.sleep(3)  # Revisa cada 3 segundos
+        else:
+            print("Combat status check indicates combat has ended.")
+            break

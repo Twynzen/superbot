@@ -1,35 +1,39 @@
-from modules.combat import is_in_combat_mode
+from modules.combat import check_combat_status
 from modules.navigation import change_map
 from modules.resource_management import search_and_collect_resources
-import logging
+from modules.image_processing import capture_map_coordinates
 from config import WAIT_TIME
 import time
 
-
 def main():
-    while True:  # Bucle principal del bot.
-        if is_in_combat_mode():
-            # Aquí podrías incluir acciones adicionales en caso de combate.
-            print("Modo combate detectado. Esperando hasta que termine...")
-            time.sleep(WAIT_TIME)  # Espera a que termine el combate.
-            continue  # Continúa el bucle principal.
+    print("Iniciando el bot...")
+    initial_coordinates = capture_map_coordinates()
+    if initial_coordinates:
+        print(f"Coordenadas iniciales del mapa al iniciar: {initial_coordinates}")
+    else:
+        print("No se pudieron capturar las coordenadas iniciales del mapa.")
 
-        # Intenta recolectar recursos.
+    while True:
         resources_collected = search_and_collect_resources()
-        if resources_collected:
-            print("Recolectando recursos...")
-            continue  # Si se recolectaron recursos, vuelve a empezar el ciclo.
 
-        # Si no se recolectaron recursos, intenta cambiar de mapa.
-        print("Intentando cambiar de mapa para encontrar más recursos...")
-        map_changed = change_map()
-        if not map_changed:
-            print("No se pudo cambiar de mapa. Reintentando...")
-            continue  # Si falla el cambio de mapa, reintenta el ciclo.
+        if not resources_collected:
+            print("No se encontraron recursos. Intentando cambiar de mapa...")
+            coordinates_before_change = capture_map_coordinates()
+            print(f"Coordenadas antes de cambiar de mapa: {coordinates_before_change}")
 
-        # Espera un momento antes de volver a empezar el ciclo.
-        time.sleep(WAIT_TIME)
+            change_map()
+            time.sleep(WAIT_TIME)  # Espera después de intentar cambiar de mapa.
+
+            coordinates_after_change = capture_map_coordinates()
+            print(f"Coordenadas después de intentar cambiar de mapa: {coordinates_after_change}")
+
+            if coordinates_before_change == coordinates_after_change:
+                print("No se detectaron cambios en la posición del mapa. Verificando modo de combate...")
+                check_combat_status()  # Verifica continuamente si está en combate
+            else:
+                print("El cambio de mapa fue exitoso.")
+
+        time.sleep(2)
 
 if __name__ == "__main__":
-    print("Iniciando el bot...")
     main()
