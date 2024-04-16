@@ -1,0 +1,446 @@
+A VER ESTE ES EL PROYECTO PORFAVOR TE LO RUEGO ENTIENDELO MUY BIEN ANTES DE CUALQUIER COSA:
+
+El proyecto se divide en estas carpetas
+API: Tiene 2 archivos por ahora vacios: 
+-game_api.py
+-language_model.py
+
+mapLocation: tiene algunas carpetas que se crean para obtener imagenes del mapa
+combat_check_imagesguarda unas imagenes last_debug_image.png, last_reference_image.png
+también tiene una imagen que dice combbat_debug.png y tiene una referencia que solo aparece en modo combate y la usaba para validar si estabamos en modo combate o no.
+también tiene otra imagen lalmada map_coordinates.png puede que esta sea una imagen que guardamos apra ver las coordinadas del mapa.
+
+modules:
+Modules tiene estos archivos.py:
+chat_management.py: por ahora vacio,
+combat.py:import pyautogui as pg
+import time
+from modules.image_processing import capture_screenshot, image_difference
+from config import COMBAT_MODE_REGION, CONFIDENCE_LEVEL,  MAP_LOCATION_DIR, WAIT_TIME
+
+
+def check_combat_status():
+    """Revisa de manera indefinida si el bot está en combate, comparando capturas de pantalla con una imagen de referencia."""
+    reference_image_path = 'ojoIA/combat_indicator.PNG'
+    debug_image_path = f"{MAP_LOCATION_DIR}/combat_debug.png"
+
+    while True:
+        capture_screenshot(COMBAT_MODE_REGION, 'combat_debug.png', MAP_LOCATION_DIR)
+        # Compara la imagen de depuración con la imagen de referencia.
+        if not image_difference(debug_image_path, reference_image_path):
+            print("Combat is still active...")
+            time.sleep(3)  # Revisa cada 3 segundos
+        else:
+            print("Combat status check indicates combat has ended.")
+            break
+
+//////////////
+
+image_processing.py:
+import pytesseract
+import os
+import pyautogui as pg
+from config import SCREENSHOTS_DIR, TESSERACT_CMD_PATH, MAP_LOCATION_DIR
+from PIL import Image, ImageChops, UnidentifiedImageError
+
+
+
+# Configura la ubicación de Tesseract en tu sistema
+pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD_PATH
+
+
+def capture_screenshot(region, filename, directory=SCREENSHOTS_DIR):
+    """Toma una captura de pantalla de la región especificada y guarda la imagen en el directorio dado."""
+    try:
+        # Crea el directorio si no existe
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        screenshot = pg.screenshot(region=region)
+        screenshot_path = f"{directory}/{filename}"
+        screenshot.save(screenshot_path)
+        return screenshot_path
+    except Exception as e:
+        print(f"Error al capturar la pantalla: {e}")
+        return None
+
+
+def capture_map_coordinates():
+    """Captura las coordenadas del mapa usando OCR."""
+    try:
+        region_to_capture = (0, 65, 100, 40)
+        filename = "map_coordinates.png"
+        screenshot_path = capture_screenshot(region_to_capture, filename, MAP_LOCATION_DIR)
+        if screenshot_path:
+            coordinates = process_image_for_text(screenshot_path)
+            if coordinates.strip() == "":  # Verifica si Tesseract devolvió una cadena vacía.
+                print("Tesseract no pudo detectar coordenadas en la imagen.")
+                return "Unknown"  # Puedes devolver un valor que denote desconocido o error.
+            return coordinates
+        else:
+            print("Fallo al capturar la imagen para OCR.")
+            return "Capture Failed"
+    except Exception as e:
+        print(f"Error al capturar las coordenadas del mapa: {e}")
+        return "Error"
+
+def process_image_for_text(image_path):
+    """Utiliza OCR para extraer texto de una imagen con configuraciones optimizadas."""
+    try:
+        image = Image.open(image_path)
+        # Preprocesamiento de la imagen (opcional): puedes aplicar filtros para mejorar el contraste, convertir a escala de grises, etc.
+        # ...
+        # Configuraciones de Tesseract
+        custom_config = r'--oem 3 --psm 6'
+        return pytesseract.image_to_string(image, config=custom_config)
+    except UnidentifiedImageError as e:
+        print(f"No se pudo abrir la imagen: {e}")
+        return None
+    except Exception as e:
+        print(f"Error al procesar la imagen para obtener texto: {e}")
+        return None
+
+def capture_and_process_image(region):
+    """Combina la captura de pantalla y el procesamiento de OCR."""
+    try:
+        screenshot_path = capture_screenshot(region, 'temp.png')
+        if screenshot_path:
+            text = process_image_for_text(screenshot_path)
+            return text
+        return None
+    except Exception as e:
+        print(f"Error al capturar y procesar la imagen: {e}")
+        return None
+
+def get_image_difference(image1_path, image2_path):
+    """Obtiene la diferencia entre dos imágenes."""
+    try:
+        img1 = Image.open(image1_path)
+        img2 = Image.open(image2_path)
+        return ImageChops.difference(img1, img2)
+    except Exception as e:
+        print(f"Error al obtener la diferencia entre imágenes: {e}")
+        return None
+    
+def image_difference(image1_path, image2_path, save_debug=True):
+    """Calcula la diferencia entre dos imágenes y devuelve si son significativamente diferentes.
+    Opcionalmente guarda las imágenes comparadas para depuración."""
+    debug_dir = f"{MAP_LOCATION_DIR}/combat_check_images"  # Directorio para guardar imágenes de depuración
+    if save_debug and not os.path.exists(debug_dir):
+        os.makedirs(debug_dir)
+    
+    try:
+        image1 = Image.open(image1_path).convert('L')  # Convertir a escala de grises para uniformidad
+        image2 = Image.open(image2_path).convert('L')
+
+        # Guardar imágenes para depuración
+        if save_debug:
+            image1.save(os.path.join(debug_dir, 'last_reference_image.png'))
+            image2.save(os.path.join(debug_dir, 'last_debug_image.png'))
+
+        diff = ImageChops.difference(image1, image2)
+        stat = diff.getbbox()  # Obtener el cuadro delimitador de las diferencias
+
+        if stat is None:
+            print("No differences found. Combat is still active.")
+            return False  # No hay diferencias
+        else:
+            print("Differences detected. Combat has ended or the scene has changed.")
+            return True  # Hay diferencias
+    except Exception as e:
+        print(f"Error processing image difference: {e}")
+        return True  # Si hay un error, suponer que el combate ha terminado por precaución
+
+//////////////
+
+navigation.py:
+import pyautogui as pg
+import time
+from config import DIRECTIONS, TOOLTIP_REGIONS, WAIT_TIME
+
+CURRENT_DIRECTION_INDEX = 0
+
+def change_map():
+    global CURRENT_DIRECTION_INDEX
+    direction_to_move = DIRECTIONS[CURRENT_DIRECTION_INDEX]
+    CURRENT_DIRECTION_INDEX = (CURRENT_DIRECTION_INDEX + 1) % len(DIRECTIONS)
+    
+    # Mueve el cursor al botón de la dirección deseada y hace clic.
+    pg.click(TOOLTIP_REGIONS[direction_to_move])
+    time.sleep(WAIT_TIME)  # Espera después de clickear para dar tiempo al juego de cambiar el mapa.
+    
+    # Aquí podrías implementar lógica adicional si es necesario, como verificaciones después de cambiar el mapa.
+
+//////////////
+resource_management.py:
+import pyautogui as pg
+import time
+from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME
+
+EXCEPTIONS = {
+        'fresno': {
+            'ignored_positions': [(1465, 862)],  # Lista de posiciones a ignorar
+        },
+        'trigo': {
+            'special_click_offsets': [(907, 588, 4, 0)],  # (x, y, offset_x, offset_y) donde x, y es la posición a buscar y (offset_x, offset_y) es cuánto mover el mouse antes de clickear
+        }
+    }
+
+
+def find_resource_on_screen(resource_type):
+    """Busca los recursos en pantalla y devuelve la ubicación si los encuentra."""
+    paths = RESOURCE_PATHS.get(resource_type, [])
+    for path in paths:
+        try:
+            location = pg.locateCenterOnScreen(path, confidence=CONFIDENCE_LEVEL)
+            if location:
+                print(f"Recurso {resource_type} encontrado en {path}.")
+                return location
+        except pg.ImageNotFoundException:
+            continue  # Simplemente continúa con la siguiente imagen
+        except Exception as e:
+            print(f"Error al buscar el recurso {resource_type} en {path}: {e}")
+    # Si termina el bucle y no encuentra nada, imprime un mensaje general.
+    print(f"Recurso {resource_type} no encontrado.")
+    return None
+
+
+def apply_exceptions(resource_type, location):
+    """Aplica las excepciones de clic especificadas en el diccionario EXCEPTIONS."""
+    if resource_type in EXCEPTIONS:
+        resource_exceptions = EXCEPTIONS[resource_type]
+        print(f"Aplicando excepciones para {resource_type}, posición encontrada: {location}")
+
+        # Para el caso de trigo que necesita un clic especial
+        if 'special_click_offsets' in resource_exceptions:
+            for (x, y, offset_x, offset_y) in resource_exceptions['special_click_offsets']:
+                if (location.x, location.y) == (x, y):
+                    new_location = (location.x + offset_x, location.y + offset_y)
+                    print(f"Aplicando offset especial a {resource_type}: {new_location}")
+                    return new_location
+
+        # Para el caso de fresno ignorado
+        if 'ignored_positions' in resource_exceptions:
+            for ignored_pos in resource_exceptions['ignored_positions']:
+                if (location.x, location.y) == ignored_pos:
+                    print(f"Ignorando posición de {resource_type} en {ignored_pos}")
+                    return None
+
+        # Para el caso de salvia que necesita ajustar el clic
+        if 'click_adjustments' in resource_exceptions:
+            for (offset_x, offset_y) in resource_exceptions['click_adjustments']:
+                new_location = (location.x + offset_x, location.y + offset_y)
+                print(f"Aplicando ajuste de clic a {resource_type}: {new_location}")
+                return new_location
+
+    return (location.x, location.y)
+def collect_resource(resource_type):
+    """Intenta recolectar un recurso dado si se encuentra en pantalla."""
+    location = find_resource_on_screen(resource_type)
+    if location:
+        # Aplica las excepciones antes de hacer clic.
+        new_location = apply_exceptions(resource_type, location)
+        if new_location:
+            pg.click(new_location)
+            time.sleep(WAIT_TIME)
+            print(f"Recolectado {resource_type}.")
+            return True
+        else:
+            print(f"Recurso {resource_type} ignorado debido a una excepción.")
+    return False
+
+def search_and_collect_resources():
+    """Bucle principal para buscar y recolectar recursos repetidamente hasta que no encuentre más."""
+    while True:
+        resources_found = False
+        for resource_type in RESOURCE_PATHS.keys():
+            while collect_resource(resource_type):  # Continúa intentando recolectar mientras haya recursos.
+                resources_found = True
+                print(f"Recolectado {resource_type}. Volviendo a buscar {resource_type}...")
+        
+        if not resources_found:
+            print("No se encontraron más recursos. Intentando cambiar de mapa...")
+            break  # Si en una pasada completa no se encuentra ningún recurso, rompe el bucle.
+
+//////////////
+ojoIAtiene resources, donde extraemos las imagenes de los recursos apra que con las librerias comparemos y demos click de estar en la Lista
+y otras imagenes como
+combat_indicator.pngcombat_status.indicator.PNG
+
+//////////////
+una carpeta llamda test, con  unos archivos vacios de py
+test_combat.py
+test_image_processing.py
+test_navigation.py
+
+//////////////
+
+Una carpeta llamada utils que tiene
+
+file_managment.py:
+import os
+from config import MAP_LOCATION_DIR
+
+def save_data_to_file(data, filename):
+    """Guarda datos en un archivo específico."""
+    with open(os.path.join(MAP_LOCATION_DIR, filename), 'w') as file:
+        # Aquí iría la lógica para escribir datos en el archivo.
+        pass
+
+def read_data_from_file(filename):
+    """Lee datos de un archivo."""
+    with open(os.path.join(MAP_LOCATION_DIR, filename), 'r') as file:
+        # Aquí iría la lógica para leer datos del archivo.
+        pass
+y los otros vacios:
+helpers.py y logger.py
+//////////////
+
+al final tenemos el config.py:
+import pytesseract
+# Configuración de la ruta de Tesseract-OCR
+TESSERACT_CMD_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD_PATH
+
+# Directorios para el manejo de recursos e imágenes
+MAP_LOCATION_DIR = "mapLocation"
+SCREENSHOTS_DIR = "ojoIA"
+RESOURCES_DIR = "resources"
+RESOURCES_TYPE =  {
+    "trigo": "cereals",
+    "castano": "wood",
+    "fresno": "wood",
+    "nogal": "wood",
+    "hierro": "minerals",
+    "ortiga": "herbage",
+    "salvia": "herbage"
+}
+#region
+REGION_TO_CAPTURE = (0, 65, 100 , 90-50) 
+
+
+
+# Configuraciones de imágenes y navegación
+IMAGE_OFFSET = 25
+WAIT_TIME = 6
+SCREENSHOT_SIZE = 100
+DIRECTIONS = [
+    'right', 'right', 'up', 'up', 'right', 'up', 'up', 'right', 'down', 'down',
+    'down', 'up', 'up', 'right', 'right', 'up', 'right', 'up', 'up', 'left',
+    'up', 'right', 'up', 'left'
+]
+
+# Rutas a imágenes específicas de recursos
+RESOURCE_PATHS = {
+    "cereals": {
+        "trigo": [
+            "ojoIA/resources/cereals/trigo1.PNG",
+            "ojoIA/resources/cereals/trigo2.PNG",
+            "ojoIA/resources/cereals/trigo3.PNG",
+            "ojoIA/resources/cereals/trigo4.PNG",
+            "ojoIA/resources/cereals/trigo5.PNG"
+        ]
+    },
+    "wood": {
+        "castano": [
+            "ojoIA/resources/wood/casta1.PNG",
+            "ojoIA/resources/wood/casta2.PNG",
+            "ojoIA/resources/wood/casta3.PNG",
+            "ojoIA/resources/wood/casta4.PNG"
+        ],
+        "fresno": [
+            "ojoIA/resources/wood/fresno1.PNG",
+            "ojoIA/resources/wood/fresno2.PNG",
+            "ojoIA/resources/wood/fresno3.PNG"
+        ],
+        "nogal": [
+            "ojoIA/resources/wood/nogal1.PNG",
+            "ojoIA/resources/wood/nogal2.PNG",
+            "ojoIA/resources/wood/nogal3.PNG"
+        ]
+    },
+    "minerals": {
+        "hierro": [
+            "ojoIA/resources/minerals/hierro1.PNG",
+            "ojoIA/resources/minerals/hierro2.PNG",
+            "ojoIA/resources/minerals/hierro3.PNG",
+            "ojoIA/resources/minerals/hierro4.PNG",
+            "ojoIA/resources/minerals/hierro5.PNG"
+        ]
+    },
+    "herbage": {
+        "ortiga": [
+            "ojoIA/resources/herbage/ortiga1.PNG",
+            "ojoIA/resources/herbage/ortiga2.PNG",
+            "ojoIA/resources/herbage/ortiga3.PNG",
+            "ojoIA/resources/herbage/ortiga4.PNG",
+            "ojoIA/resources/herbage/ortiga5.PNG"
+        ],
+        "salvia": [
+            "ojoIA/resources/herbage/salvia1.PNG",
+            "ojoIA/resources/herbage/salvia2.PNG"
+        ]
+    }
+}
+
+
+# Regiones de captura de pantalla para detectar tooltips y otros indicadores
+TOOLTIP_REGIONS = {
+    'up': (960 - 50, 0, 100, 50),
+    'left': (0 + 300, 540 - 25, 100, 50),
+    'right': (1920 - 400, 540 - 25, 100, 50),
+    'down': (960 - 50, 1080 - 200, 100, 50),
+}
+#Combat 
+COMBAT_MODE_REGION = (1310, 995, 165, 45) 
+
+
+CONFIDENCE_LEVEL = 0.7
+
+/////////////////
+Y el centro de todo
+main.py :
+from modules.combat import check_combat_status
+from modules.navigation import change_map
+from modules.resource_management import search_and_collect_resources
+from modules.image_processing import capture_map_coordinates
+from config import WAIT_TIME, RESOURCES_TYPE
+import time
+
+def main():
+    print("Iniciando el bot...")
+    initial_coordinates = capture_map_coordinates()
+    if initial_coordinates:
+        print(f"Coordenadas iniciales del mapa al iniciar: {initial_coordinates}")
+    else:
+        print("No se pudieron capturar las coordenadas iniciales del mapa.")
+
+    while True:
+        resources_collected = search_and_collect_resources()
+
+        if not resources_collected:
+            print("No se encontraron recursos. Intentando cambiar de mapa...")
+            coordinates_before_change = capture_map_coordinates()
+            print(f"Coordenadas antes de cambiar de mapa: {coordinates_before_change}")
+
+            change_map()
+            time.sleep(WAIT_TIME)  # Espera después de intentar cambiar de mapa.
+
+            coordinates_after_change = capture_map_coordinates()
+            print(f"Coordenadas después de intentar cambiar de mapa: {coordinates_after_change}")
+
+            if coordinates_before_change == coordinates_after_change:
+                print("No se detectaron cambios en la posición del mapa. Verificando modo de combate...")
+                check_combat_status()  # Verifica continuamente si está en combate
+            else:
+                print("El cambio de mapa fue exitoso.")
+
+        time.sleep(2)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+Esto esta acondicionado a cambios.

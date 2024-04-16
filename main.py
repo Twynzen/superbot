@@ -2,7 +2,7 @@ from modules.combat import check_combat_status
 from modules.navigation import change_map
 from modules.resource_management import search_and_collect_resources
 from modules.image_processing import capture_map_coordinates
-from config import WAIT_TIME
+from config import WAIT_TIME, RESOURCES_TYPE
 import time
 
 def main():

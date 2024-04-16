@@ -7,7 +7,15 @@ pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD_PATH
 MAP_LOCATION_DIR = "mapLocation"
 SCREENSHOTS_DIR = "ojoIA"
 RESOURCES_DIR = "resources"
-
+RESOURCES_TYPE =  {
+    "trigo": "cereals",
+    "castano": "wood",
+    "fresno": "wood",
+    "nogal": "wood",
+    "hierro": "minerals",
+    "ortiga": "herbage",
+    "salvia": "herbage"
+}
 #region
 REGION_TO_CAPTURE = (0, 65, 100 , 90-50) 
 
@@ -25,14 +33,57 @@ DIRECTIONS = [
 
 # Rutas a imágenes específicas de recursos
 RESOURCE_PATHS = {
-    "trigo": ["ojoIA/trigo1.PNG", "ojoIA/trigo2.PNG", "ojoIA/trigo3.PNG", "ojoIA/trigo4.PNG", "ojoIA/trigo5.PNG"],
-    "fresno": ["ojoIA/fresno1.PNG", "ojoIA/fresno2.PNG", "ojoIA/fresno3.PNG"],
-    "castano": ["ojoIA/casta1.PNG", "ojoIA/casta2.PNG", "ojoIA/casta3.PNG", "ojoIA/casta4.PNG"],
-    "ortiga": ["ojoIA/ortiga1.PNG", "ojoIA/ortiga2.PNG", "ojoIA/ortiga3.PNG", "ojoIA/ortiga4.PNG", "ojoIA/ortiga5.PNG"],
-    "salvia": ["ojoIA/salvia1.PNG", "ojoIA/salvia2.PNG"],
-    "nogal": ["ojoIA/nogal1.PNG", "ojoIA/nogal2.PNG", "ojoIA/nogal3.PNG"],
-    "hierro": ["ojoIA/hierro1.PNG", "ojoIA/hierro2.PNG", "ojoIA/hierro3.PNG", "ojoIA/hierro4.PNG", "ojoIA/hierro5.PNG"]   
+    "cereals": {
+        "trigo": [
+            "ojoIA/resources/cereals/trigo1.PNG",
+            "ojoIA/resources/cereals/trigo2.PNG",
+            "ojoIA/resources/cereals/trigo3.PNG",
+            "ojoIA/resources/cereals/trigo4.PNG",
+            "ojoIA/resources/cereals/trigo5.PNG"
+        ]
+    },
+    "wood": {
+        "castano": [
+            "ojoIA/resources/wood/casta1.PNG",
+            "ojoIA/resources/wood/casta2.PNG",
+            "ojoIA/resources/wood/casta3.PNG",
+            "ojoIA/resources/wood/casta4.PNG"
+        ],
+        "fresno": [
+            "ojoIA/resources/wood/fresno1.PNG",
+            "ojoIA/resources/wood/fresno2.PNG",
+            "ojoIA/resources/wood/fresno3.PNG"
+        ],
+        "nogal": [
+            "ojoIA/resources/wood/nogal1.PNG",
+            "ojoIA/resources/wood/nogal2.PNG",
+            "ojoIA/resources/wood/nogal3.PNG"
+        ]
+    },
+    "minerals": {
+        "hierro": [
+            "ojoIA/resources/minerals/hierro1.PNG",
+            "ojoIA/resources/minerals/hierro2.PNG",
+            "ojoIA/resources/minerals/hierro3.PNG",
+            "ojoIA/resources/minerals/hierro4.PNG",
+            "ojoIA/resources/minerals/hierro5.PNG"
+        ]
+    },
+    "herbage": {
+        "ortiga": [
+            "ojoIA/resources/herbage/ortiga1.PNG",
+            "ojoIA/resources/herbage/ortiga2.PNG",
+            "ojoIA/resources/herbage/ortiga3.PNG",
+            "ojoIA/resources/herbage/ortiga4.PNG",
+            "ojoIA/resources/herbage/ortiga5.PNG"
+        ],
+        "salvia": [
+            "ojoIA/resources/herbage/salvia1.PNG",
+            "ojoIA/resources/herbage/salvia2.PNG"
+        ]
+    }
 }
+
 
 # Regiones de captura de pantalla para detectar tooltips y otros indicadores
 TOOLTIP_REGIONS = {

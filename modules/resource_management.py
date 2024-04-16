@@ -1,6 +1,6 @@
 import pyautogui as pg
 import time
-from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME
+from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME, RESOURCES_TYPE
 
 EXCEPTIONS = {
         'fresno': {
@@ -12,22 +12,24 @@ EXCEPTIONS = {
     }
 
 
-def find_resource_on_screen(resource_type):
-    """Busca los recursos en pantalla y devuelve la ubicación si los encuentra."""
-    paths = RESOURCE_PATHS.get(resource_type, [])
+def find_resource_on_screen(resource_type, category):
+    """Busca los recursos en pantalla por tipo y categoría y devuelve la ubicación si los encuentra."""
+    category_dict = RESOURCE_PATHS.get(category, {})
+    paths = category_dict.get(resource_type, [])
     for path in paths:
         try:
             location = pg.locateCenterOnScreen(path, confidence=CONFIDENCE_LEVEL)
             if location:
-                print(f"Recurso {resource_type} encontrado en {path}.")
+                print(f"Recurso de tipo {resource_type} en categoría {category} encontrado en {path}.")
                 return location
         except pg.ImageNotFoundException:
             continue  # Simplemente continúa con la siguiente imagen
         except Exception as e:
-            print(f"Error al buscar el recurso {resource_type} en {path}: {e}")
+            print(f"Error al buscar el recurso de tipo {resource_type} en categoría {category} en {path}: {e}")
     # Si termina el bucle y no encuentra nada, imprime un mensaje general.
-    print(f"Recurso {resource_type} no encontrado.")
+    print(f"Recurso de tipo {resource_type} en categoría {category} no encontrado.")
     return None
+
 
 
 def apply_exceptions(resource_type, location):
@@ -59,7 +61,7 @@ def apply_exceptions(resource_type, location):
                 return new_location
 
     return (location.x, location.y)
-def collect_resource(resource_type):
+
     """Intenta recolectar un recurso dado si se encuentra en pantalla."""
     location = find_resource_on_screen(resource_type)
     if location:
@@ -73,18 +75,35 @@ def collect_resource(resource_type):
         else:
             print(f"Recurso {resource_type} ignorado debido a una excepción.")
     return False
+def collect_resource(resource_type):
+    """Intenta recolectar un recurso dado si se encuentra en pantalla."""
+    category = RESOURCES_TYPE.get(resource_type, None)
+    if category is None:
+        print(f"Categoría no definida para el recurso {resource_type}.")
+        return False  # Salir si no hay categoría definida.
 
+    location = find_resource_on_screen(resource_type, category)
+    if location:
+        # Aplica las excepciones antes de hacer clic.
+        new_location = apply_exceptions(resource_type, location)
+        if new_location:
+            pg.click(new_location)
+            time.sleep(WAIT_TIME)
+            print(f"Recolectado {resource_type}.")
+            return True
+        else:
+            print(f"Recurso {resource_type} ignorado debido a una excepción.")
+    return False
 def search_and_collect_resources():
     """Bucle principal para buscar y recolectar recursos repetidamente hasta que no encuentre más."""
-    while True:
-        resources_found = False
-        for resource_type in RESOURCE_PATHS.keys():
-            while collect_resource(resource_type):  # Continúa intentando recolectar mientras haya recursos.
-                resources_found = True
-                print(f"Recolectado {resource_type}. Volviendo a buscar {resource_type}...")
-        
-        if not resources_found:
-            print("No se encontraron más recursos. Intentando cambiar de mapa...")
-            break  # Si en una pasada completa no se encuentra ningún recurso, rompe el bucle.
-
+    resources_found = False
+    for resource_type in RESOURCES_TYPE:  # Solo iterar sobre los tipos definidos con categoría
+        while collect_resource(resource_type):  # Continúa intentando recolectar mientras haya recursos.
+            resources_found = True
+            print(f"Recolectado {resource_type}. Volviendo a buscar {resource_type}...")
+    
+    if not resources_found:
+        print("No se encontraron más recursos. Intentando cambiar de mapa...")
+        return False
+    return True
 
