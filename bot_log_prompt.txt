@@ -156,14 +156,14 @@ def image_difference(image1_path, image2_path, save_debug=True):
 navigation.py:
 import pyautogui as pg
 import time
-from config import DIRECTIONS, TOOLTIP_REGIONS, WAIT_TIME
+from config import TOOLTIP_REGIONS, WAIT_TIME
 
 CURRENT_DIRECTION_INDEX = 0
 
-def change_map():
+def change_map(path):
     global CURRENT_DIRECTION_INDEX
-    direction_to_move = DIRECTIONS[CURRENT_DIRECTION_INDEX]
-    CURRENT_DIRECTION_INDEX = (CURRENT_DIRECTION_INDEX + 1) % len(DIRECTIONS)
+    direction_to_move = path[CURRENT_DIRECTION_INDEX]
+    CURRENT_DIRECTION_INDEX = (CURRENT_DIRECTION_INDEX + 1) % len(path)
     
     # Mueve el cursor al botón de la dirección deseada y hace clic.
     pg.click(TOOLTIP_REGIONS[direction_to_move])
@@ -400,12 +400,22 @@ CONFIDENCE_LEVEL = 0.7
 /////////////////
 Y el centro de todo
 main.py :
-from modules.combat import check_combat_status
-from modules.navigation import change_map
-from modules.resource_management import search_and_collect_resources
+from modules.combat import  searchMob
+from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates
-from config import WAIT_TIME, RESOURCES_TYPE
-import time
+
+def main_menu():
+    print("Seleccione una opción:")
+    print("1. Recolectar recursos")
+    print("2. Buscar mobs en la zona (Funcionalidad en desarrollo)")
+    print("3. Leer chat del juego (Funcionalidad en desarrollo)")
+    print("3. Combate automatico (Funcionalidad en desarrollo)")
+    
+    choice = input("Introduce el número de la opción deseada: ")
+    return choice
+
+
+        
 
 def main():
     print("Iniciando el bot...")
@@ -414,32 +424,34 @@ def main():
         print(f"Coordenadas iniciales del mapa al iniciar: {initial_coordinates}")
     else:
         print("No se pudieron capturar las coordenadas iniciales del mapa.")
-
+    
     while True:
-        resources_collected = search_and_collect_resources()
+        user_choice = main_menu()
+        
+        if user_choice == '1':
+            while True:
+                search_resources()
+            
 
-        if not resources_collected:
-            print("No se encontraron recursos. Intentando cambiar de mapa...")
-            coordinates_before_change = capture_map_coordinates()
-            print(f"Coordenadas antes de cambiar de mapa: {coordinates_before_change}")
+        elif user_choice == '2':
+           while True:
+               searchMob()
+        
+        elif user_choice == '3':
+            print("Esta funcionalidad aún está en desarrollo.")
+            # Aquí iría la lógica para leer el chat del juego.
+            # Ejemplo: read_game_chat()
+        
+        elif user_choice == '4':
+            print("Esta funcionalidad aún está en desarrollo.")
+            # Aquí iría la lógica para combate
+            # Ejemplo: read_game_chat() IR AL BANCO
 
-            change_map()
-            time.sleep(WAIT_TIME)  # Espera después de intentar cambiar de mapa.
-
-            coordinates_after_change = capture_map_coordinates()
-            print(f"Coordenadas después de intentar cambiar de mapa: {coordinates_after_change}")
-
-            if coordinates_before_change == coordinates_after_change:
-                print("No se detectaron cambios en la posición del mapa. Verificando modo de combate...")
-                check_combat_status()  # Verifica continuamente si está en combate
-            else:
-                print("El cambio de mapa fue exitoso.")
-
-        time.sleep(2)
+        else:
+            print("Opción no válida. Por favor, intenta de nuevo.")
 
 if __name__ == "__main__":
     main()
-
 
 
 
