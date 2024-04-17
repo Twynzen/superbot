@@ -25,7 +25,15 @@ REGION_TO_CAPTURE = (0, 65, 100 , 90-50)
 IMAGE_OFFSET = 25
 WAIT_TIME = 6
 SCREENSHOT_SIZE = 100
-DIRECTIONS = [
+
+DIRECTION_PATH_ABSTRUB_ZAAP = [
+    'left', 'left', 'down', 'right', 'right', 'right', 'up', 'up', 'left', 'left',
+    'left', 'down', 'left', 'left', 'down', 'right', 'down', 'left', 'right', 'right',
+    'up', 'right', 'down', 'right', 'up','right','down','right','up','up', 'up','up', 'up',
+    'left','down','left','up','left','down','left','up','left','left','down','right','down','left','down',
+]
+
+DIRECTION_PATH_ESCARAHOJA_ZAAP = [
     'right', 'right', 'up', 'up', 'right', 'up', 'up', 'right', 'down', 'down',
     'down', 'up', 'up', 'right', 'right', 'up', 'right', 'up', 'up', 'left',
     'up', 'right', 'up', 'left'

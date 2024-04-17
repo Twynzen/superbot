@@ -1,5 +1,7 @@
 import pytesseract
 import os
+import numpy as np
+import cv2
 import pyautogui as pg
 from config import SCREENSHOTS_DIR, TESSERACT_CMD_PATH, MAP_LOCATION_DIR
 from PIL import Image, ImageChops, UnidentifiedImageError
@@ -84,30 +86,34 @@ def get_image_difference(image1_path, image2_path):
         return None
     
 def image_difference(image1_path, image2_path, save_debug=True):
-    """Calcula la diferencia entre dos imágenes y devuelve si son significativamente diferentes.
+    """Calcula la diferencia entre dos imágenes usando OpenCV y devuelve si son significativamente diferentes.
     Opcionalmente guarda las imágenes comparadas para depuración."""
     debug_dir = f"{MAP_LOCATION_DIR}/combat_check_images"  # Directorio para guardar imágenes de depuración
     if save_debug and not os.path.exists(debug_dir):
         os.makedirs(debug_dir)
     
     try:
-        image1 = Image.open(image1_path).convert('L')  # Convertir a escala de grises para uniformidad
-        image2 = Image.open(image2_path).convert('L')
+        # Cargar imágenes y convertirlas a escala de grises
+        img1 = cv2.imread(image1_path, cv2.IMREAD_GRAYSCALE)
+        img2 = cv2.imread(image2_path, cv2.IMREAD_GRAYSCALE)
+
+        # Calcular la diferencia entre las imágenes
+        diff = cv2.absdiff(img1, img2)
+        _, thresh = cv2.threshold(diff, 30, 255, cv2.THRESH_BINARY)
 
         # Guardar imágenes para depuración
         if save_debug:
-            image1.save(os.path.join(debug_dir, 'last_reference_image.png'))
-            image2.save(os.path.join(debug_dir, 'last_debug_image.png'))
+            cv2.imwrite(os.path.join(debug_dir, 'last_reference_image.png'), img1)
+            cv2.imwrite(os.path.join(debug_dir, 'last_debug_image.png'), img2)
+            cv2.imwrite(os.path.join(debug_dir, 'diff_image.png'), thresh)  # Guardar imagen de diferencia para revisión
 
-        diff = ImageChops.difference(image1, image2)
-        stat = diff.getbbox()  # Obtener el cuadro delimitador de las diferencias
-
-        if stat is None:
-            print("No differences found. Combat is still active.")
-            return False  # No hay diferencias
-        else:
+        # Comprobar si hay diferencias significativas
+        if np.sum(thresh) > 0:  # Si hay píxeles blancos en la imagen umbralizada, hay diferencias
             print("Differences detected. Combat has ended or the scene has changed.")
-            return True  # Hay diferencias
+            return True
+        else:
+            print("No differences found. Combat is still active.")
+            return False
     except Exception as e:
-        print(f"Error processing image difference: {e}")
+        print(f"Error processing image difference using OpenCV: {e}")
         return True  # Si hay un error, suponer que el combate ha terminado por precaución

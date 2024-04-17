@@ -1,13 +1,13 @@
 import pyautogui as pg
 import time
-from config import DIRECTIONS, TOOLTIP_REGIONS, WAIT_TIME
+from config import TOOLTIP_REGIONS, WAIT_TIME
 
 CURRENT_DIRECTION_INDEX = 0
 
-def change_map():
+def change_map(path):
     global CURRENT_DIRECTION_INDEX
-    direction_to_move = DIRECTIONS[CURRENT_DIRECTION_INDEX]
-    CURRENT_DIRECTION_INDEX = (CURRENT_DIRECTION_INDEX + 1) % len(DIRECTIONS)
+    direction_to_move = path[CURRENT_DIRECTION_INDEX]
+    CURRENT_DIRECTION_INDEX = (CURRENT_DIRECTION_INDEX + 1) % len(path)
     
     # Mueve el cursor al botón de la dirección deseada y hace clic.
     pg.click(TOOLTIP_REGIONS[direction_to_move])
