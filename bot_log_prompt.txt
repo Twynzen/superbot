@@ -1,14 +1,46 @@
-A VER ESTE ES EL PROYECTO PORFAVOR TE LO RUEGO ENTIENDELO MUY BIEN ANTES DE CUALQUIER COSA:
+A VER ESTE ES EL PROYECTO ENTIENDELO MUY BIEN ANTES DE CUALQUIER COSA:
 
 El proyecto se divide en estas carpetas
-API: Tiene 2 archivos por ahora vacios: 
+API: Tiene 3 archivos aun en desarrollo esta sección: 
+
+bot_controller.py:
+from modules.resource_management import search_resources
+from modules.combat import searchMob
+from modules.characters_tracking import track_and_click_character
+# ...otros imports necesarios...
+
+def execute_action(action):
+    if action == 'collect_resources':
+        search_resources()
+    elif action == 'search_mob':
+        searchMob()
+    # ... otros casos
+    elif action == 'track_character':
+        track_and_click_character()
+    # ... más acciones a futuro
+    else:
+        print("Acción no reconocida.")
+
+def interpret_and_execute_gpt_response(gpt_response):
+    # Aquí vendría la lógica para interpretar la respuesta de la API
+    # y convertirlo en una acción.
+    action = parse_gpt_response_to_action(gpt_response)
+    execute_action(action)
+
+def parse_gpt_response_to_action(gpt_response):
+    # Esta función se encargará de traducir la respuesta de GPT en una acción
+    # Por ejemplo, si GPT sugiere recolectar recursos, devolvería 'collect_resources'
+    # ...
+    return action 
+
+
 -game_api.py
 -language_model.py
 
 mapLocation: tiene algunas carpetas que se crean para obtener imagenes del mapa
 combat_check_imagesguarda unas imagenes last_debug_image.png, last_reference_image.png
-también tiene una imagen que dice combbat_debug.png y tiene una referencia que solo aparece en modo combate y la usaba para validar si estabamos en modo combate o no.
-también tiene otra imagen lalmada map_coordinates.png puede que esta sea una imagen que guardamos apra ver las coordinadas del mapa.
+también tiene una imagen que dice combbat_debug.png y tiene una referencia que solo aparece en modo combate y la usaba para validar si estábamos en modo combate o no.
+también tiene otra imagen llamada map_coordinates.png puede que esta sea una imagen que guardamos para ver las coordinadas del mapa.
 
 modules:
 Modules tiene estos archivos.py:
@@ -54,11 +86,50 @@ def searchMob():
      else:
          print("El cambio de mapa fue exitoso.")
             # Ejemplo: find_mobs()
+
+
+//////////////
+characters_tracking.py:
+
+import os
+import cv2
+import pyautogui as pg
+
+CHARACTER_IMAGES_DIR = os.path.join("ojoIA", "characters", "main_character", "Static")
+
+def load_character_templates():
+    templates = {}
+    for filename in os.listdir(CHARACTER_IMAGES_DIR):
+        path = os.path.join(CHARACTER_IMAGES_DIR, filename)
+        template = cv2.imread(path, cv2.IMREAD_COLOR)
+        direction = os.path.splitext(filename)[0]  # 'look_down', 'look_up', etc.
+        templates[direction] = template
+    return templates
+
+def detect_character(frame, templates):
+    match_threshold = 0.8  # Ejemplo de umbral, debería ser ajustado según las pruebas
+    for direction, template in templates.items():
+        result = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+        if max_val > match_threshold:
+            top_left = max_loc
+            h, w = template.shape[:2]
+            bottom_right = (top_left[0] + w, top_left[1] + h)
+            center = (top_left[0] + w // 2, top_left[1] + h // 2)
+            cv2.rectangle(frame, top_left, bottom_right, color=(0, 255, 0), thickness=2)
+            return center  # Devuelve la posición central del personaje
+    return None
+
+def click_on_character(center):
+    if center is not None:
+        pg.click(center)
+
 //////////////
 
-image_processing.py:
-import pytesseract
+image_processing.py:import pytesseract
 import os
+import numpy as np
+import cv2
 import pyautogui as pg
 from config import SCREENSHOTS_DIR, TESSERACT_CMD_PATH, MAP_LOCATION_DIR
 from PIL import Image, ImageChops, UnidentifiedImageError
@@ -143,34 +214,47 @@ def get_image_difference(image1_path, image2_path):
         return None
     
 def image_difference(image1_path, image2_path, save_debug=True):
-    """Calcula la diferencia entre dos imágenes y devuelve si son significativamente diferentes.
+    """Calcula la diferencia entre dos imágenes usando OpenCV y devuelve si son significativamente diferentes.
     Opcionalmente guarda las imágenes comparadas para depuración."""
     debug_dir = f"{MAP_LOCATION_DIR}/combat_check_images"  # Directorio para guardar imágenes de depuración
     if save_debug and not os.path.exists(debug_dir):
         os.makedirs(debug_dir)
     
     try:
-        image1 = Image.open(image1_path).convert('L')  # Convertir a escala de grises para uniformidad
-        image2 = Image.open(image2_path).convert('L')
+        # Cargar imágenes y convertirlas a escala de grises
+        img1 = cv2.imread(image1_path, cv2.IMREAD_GRAYSCALE)
+        img2 = cv2.imread(image2_path, cv2.IMREAD_GRAYSCALE)
+
+        # Calcular la diferencia entre las imágenes
+        diff = cv2.absdiff(img1, img2)
+        _, thresh = cv2.threshold(diff, 30, 255, cv2.THRESH_BINARY)
 
         # Guardar imágenes para depuración
         if save_debug:
-            image1.save(os.path.join(debug_dir, 'last_reference_image.png'))
-            image2.save(os.path.join(debug_dir, 'last_debug_image.png'))
+            cv2.imwrite(os.path.join(debug_dir, 'last_reference_image.png'), img1)
+            cv2.imwrite(os.path.join(debug_dir, 'last_debug_image.png'), img2)
+            cv2.imwrite(os.path.join(debug_dir, 'diff_image.png'), thresh)  # Guardar imagen de diferencia para revisión
 
-        diff = ImageChops.difference(image1, image2)
-        stat = diff.getbbox()  # Obtener el cuadro delimitador de las diferencias
-
-        if stat is None:
-            print("No differences found. Combat is still active.")
-            return False  # No hay diferencias
-        else:
+        # Comprobar si hay diferencias significativas
+        if np.sum(thresh) > 0:  # Si hay píxeles blancos en la imagen umbralizada, hay diferencias
             print("Differences detected. Combat has ended or the scene has changed.")
-            return True  # Hay diferencias
+            return True
+        else:
+            print("No differences found. Combat is still active.")
+            return False
     except Exception as e:
-        print(f"Error processing image difference: {e}")
+        print(f"Error processing image difference using OpenCV: {e}")
         return True  # Si hay un error, suponer que el combate ha terminado por precaución
 
+def capture_current_game_frame():
+    """
+    Captura la pantalla actual del juego y devuelve una imagen.
+    La región capturada puede ser ajustada según la resolución y la ventana del juego.
+    """
+    game_region = (0, 0, 1920, 1080)  # Ajusta esta tupla a la región exacta del juego
+    frame = pg.screenshot(region=game_region)
+    frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+    return frame
 //////////////
 
 navigation.py:
@@ -283,9 +367,35 @@ def search_and_collect_resources():
             break  # Si en una pasada completa no se encuentra ningún recurso, rompe el bucle.
 
 //////////////
-ojoIAtiene resources, donde extraemos las imagenes de los recursos apra que con las librerias comparemos y demos click de estar en la Lista
+ojoIAtiene resources, donde extraemos las imagenes de los recursos para que con las librerias comparemos y demos click de estar en la Lista
 y otras imagenes como
 combat_indicator.pngcombat_status.indicator.PNG
+
+ojolA
+│
+├───characters
+│   │
+│   └───main_character
+│       │
+│       └───Static
+│             ├─ look_down.png (17 KB)
+│             ├─ look_down_left.png (10.4 KB)
+│             ├─ look_down_right.png
+│             ├─ look_left.png
+│             ├─ look_right.png
+│             ├─ look_up.png
+│             ├─ look_up_left.png
+│             └─ look_up_right.png
+│
+└───resources
+    │
+    ├───cereals
+    │
+    ├───herbage
+    │
+    ├───minerals
+    │
+    └───wood
 
 //////////////
 una carpeta llamda test, con  unos archivos vacios de py
@@ -475,4 +585,3 @@ if __name__ == "__main__":
 
 
 
-Esto esta acondicionado a cambios.
