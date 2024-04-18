@@ -117,3 +117,13 @@ def image_difference(image1_path, image2_path, save_debug=True):
     except Exception as e:
         print(f"Error processing image difference using OpenCV: {e}")
         return True  # Si hay un error, suponer que el combate ha terminado por precaución
+
+def capture_current_game_frame():
+    """
+    Captura la pantalla actual del juego y devuelve una imagen.
+    La región capturada puede ser ajustada según la resolución y la ventana del juego.
+    """
+    game_region = (0, 0, 1920, 1080)  # Ajusta esta tupla a la región exacta del juego
+    frame = pg.screenshot(region=game_region)
+    frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+    return frame
