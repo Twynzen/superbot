@@ -47,26 +47,109 @@ Modules tiene estos archivos.py:
 chat_management.py: por ahora vacio,
 combat.py:import pyautogui as pg
 import time
+import cv2
+import pytesseract
+import numpy as np
 from modules.navigation import change_map
 from modules.image_processing import capture_screenshot, image_difference
-from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME
-from modules.image_processing import capture_map_coordinates
-
+from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME
+from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges
 
 def check_combat_status():
-    """Revisa de manera indefinida si el bot está en combate, comparando capturas de pantalla con una imagen de referencia."""
-    reference_image_path = 'ojoIA/combat_indicator.PNG'
-    debug_image_path = f"{MAP_LOCATION_DIR}/combat_debug.png"
-
+    """Revisa si el bot está en combate, basado en la presencia de la barra de estado."""
     while True:
-        capture_screenshot(COMBAT_MODE_REGION, 'combat_debug.png', MAP_LOCATION_DIR)
-        # Compara la imagen de depuración con la imagen de referencia.
-        if not image_difference(debug_image_path, reference_image_path):
+        status_bar_image_path = capture_status_bar()
+        
+        # Aquí podrías realizar un procesamiento de imagen adicional si es necesario
+        # Por ejemplo, aplicar filtros, detección de bordes, etc.
+
+        if is_status_bar_detected(status_bar_image_path):
             print("Combat is still active...")
-            time.sleep(3)  # Revisa cada 3 segundos
+            hover_and_detect_player_name(PLAYER_NAME)
+            
+            # Aquí podrías agregar lógica adicional basada en la información de la barra de estado
         else:
             print("Combat status check indicates combat has ended.")
             break
+
+        time.sleep(3) 
+        
+def is_status_bar_detected(image_path):
+    image = cv2.imread(image_path)
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    
+    # Rangos HSV para colores específicos
+    # Estos valores son solo ejemplos, debes ajustarlos según los colores exactos de tu juego
+    red_lower = np.array([0, 70, 50])
+    red_upper = np.array([10, 255, 255])
+    blue_lower = np.array([110, 50, 50])
+    blue_upper = np.array([130, 255, 255])
+    
+    # Crear máscaras para los colores
+    mask_red = cv2.inRange(hsv, red_lower, red_upper)
+    mask_blue = cv2.inRange(hsv, blue_lower, blue_upper)
+    
+    # Buscar contornos en las máscaras
+    contours_red, _ = cv2.findContours(mask_red, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours_blue, _ = cv2.findContours(mask_blue, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # Dibujar contornos sobre la imagen original para la visualización
+    cv2.drawContours(image, contours_red, -1, (0, 255, 0), 3)  # Dibuja contornos rojos en verde
+    cv2.drawContours(image, contours_blue, -1, (255, 0, 0), 3)  # Dibuja contornos azules en azul
+
+    # TESTEO :Mostrar las máscaras y la imagen original con contornos QUITAR!
+    # cv2.imshow('Red Mask', mask_red)
+    # cv2.imshow('Blue Mask', mask_blue)
+    # cv2.imshow('Detected Contours', image)
+
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    # Verifica si hay contornos significativos de los colores rojo y azul
+    red_detected = any(cv2.contourArea(contour) > 100 for contour in contours_red)
+    blue_detected = any(cv2.contourArea(contour) > 100 for contour in contours_blue)
+    
+    # Aquí podría ir la lógica adicional para el reconocimiento de patrones y formas
+
+    return red_detected and blue_detected    
+
+def hover_and_detect_player_name(player_name):
+    """Mueve el cursor sobre los personajes en la barra y espera a que aparezcan los nombres en toda la pantalla."""
+    print("Buscando Personaje")
+    # Calcular las posiciones de hover basadas en COMBAT_MODE_REGION
+    start_x, start_y, width, height = COMBAT_MODE_REGION
+    num_steps = 15  # Cantidad de pasos para moverse a lo largo de la barra
+    step_size = height // num_steps  # Divide la altura en 3 partes para las 3 barras
+
+    for step in range(num_steps):
+        hover_position = (start_x + width // 2, start_y + step * step_size)
+        pg.moveTo(hover_position)
+        time.sleep(0.01)  # Un retardo más corto para el hover
+
+        # Toma una captura de pantalla de toda la pantalla
+        full_screen_screenshot = pg.screenshot()
+        full_screen_screenshot_path = f"{MAP_LOCATION_DIR}/full_screen_with_name.png"
+        full_screen_screenshot.save(full_screen_screenshot_path)
+
+        # Leer el nombre resaltado usando OCR
+        text = pytesseract.image_to_string(cv2.imread(full_screen_screenshot_path))
+        
+        if player_name in text:
+            print(f"{player_name} encontrado en la pantalla!")
+            # Aquí podrías añadir lógica adicional para determinar la posición del personaje.
+            break
+        else:
+            # Si no se encuentra el nombre, continúa con el siguiente paso.
+            continue
+ 
+def capture_status_bar():
+    # Define la región donde se espera que esté la barra de estado de los personajes.
+    # Estas coordenadas son hipotéticas y deben ser ajustadas según tu juego.
+    status_bar_region = COMBAT_MODE_REGION
+    status_bar_image = pg.screenshot(region=status_bar_region)
+    status_bar_image_path = f"{MAP_LOCATION_DIR}/current_status_bar.png"
+    status_bar_image.save(status_bar_image_path)
+    return status_bar_image_path
         
 def searchMob():
      print("Comenzando ruta de abstrub para ardilla.")
@@ -88,6 +171,24 @@ def searchMob():
             # Ejemplo: find_mobs()
 
 
+def initiate_combat_sequence():
+    # Asegúrate de que estás en combate
+    if check_combat_status():
+        
+        
+        # Captura el marco del mapa de combate y detecta los bordes
+        combat_map_frame = capture_combat_map_frame()
+        combat_map_edges = detect_map_edges(combat_map_frame)
+        
+        cv2.imshow('Combat Map Edges', combat_map_edges)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        # Con base en los bordes, determina la posición del personaje y enemigos
+        # ... (lógica para determinar posiciones)
+        # Realiza el siguiente movimiento o ataque
+        # ... (lógica para realizar acciones)
+
+# Puedes llamar a initiate_combat_sequence en el lugar apropiado donde manejas el combate en main.py o combat.py
 //////////////
 characters_tracking.py:
 
@@ -126,7 +227,8 @@ def click_on_character(center):
 
 //////////////
 
-image_processing.py:import pytesseract
+image_processing.py:
+import pytesseract
 import os
 import numpy as np
 import cv2
@@ -255,6 +357,21 @@ def capture_current_game_frame():
     frame = pg.screenshot(region=game_region)
     frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
     return frame
+
+def detect_map_edges(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blurred, 50, 150)
+    return edges
+
+def capture_combat_map_frame():
+    # Definir la región específica donde se espera que esté el mapa de combate.
+    # Ajusta los valores de la tupla según la posición y tamaño del mapa en tu juego.
+    combat_map_region = (100, 200, 800, 600)
+    frame = pg.screenshot(region=combat_map_region)
+    frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+    return frame
+
 //////////////
 
 navigation.py:
@@ -439,6 +556,7 @@ RESOURCES_DIR = "resources"
 RESOURCES_TYPE =  {
     "trigo": "cereals",
     "castano": "wood",
+    "roble": "wood",
     "fresno": "wood",
     "nogal": "wood",
     "hierro": "minerals",
@@ -454,7 +572,15 @@ REGION_TO_CAPTURE = (0, 65, 100 , 90-50)
 IMAGE_OFFSET = 25
 WAIT_TIME = 6
 SCREENSHOT_SIZE = 100
-DIRECTIONS = [
+
+DIRECTION_PATH_ABSTRUB_ZAAP = [
+    'left', 'left', 'down', 'right', 'right', 'right', 'up', 'up', 'left', 'left',
+    'left', 'down', 'left', 'left', 'down', 'right', 'down', 'left', 'right', 'right',
+    'up', 'right', 'down', 'right', 'up','right','down','right','up','up', 'up','up', 'up',
+    'left','down','left','up','left','down','left','up','left','left','down','right','down','left','down',
+]
+
+DIRECTION_PATH_ESCARAHOJA_ZAAP = [
     'right', 'right', 'up', 'up', 'right', 'up', 'up', 'right', 'down', 'down',
     'down', 'up', 'up', 'right', 'right', 'up', 'right', 'up', 'up', 'left',
     'up', 'right', 'up', 'left'
@@ -487,6 +613,10 @@ RESOURCE_PATHS = {
             "ojoIA/resources/wood/nogal1.PNG",
             "ojoIA/resources/wood/nogal2.PNG",
             "ojoIA/resources/wood/nogal3.PNG"
+        ],
+        "roble": [
+            "ojoIA/resources/wood/roble1.PNG",
+            "ojoIA/resources/wood/roble2.PNG",
         ]
     },
     "minerals": {
@@ -522,29 +652,42 @@ TOOLTIP_REGIONS = {
     'down': (960 - 50, 1080 - 200, 100, 50),
 }
 #Combat 
-COMBAT_MODE_REGION = (1310, 995, 165, 45) 
+COMBAT_MODE_REGION = (1610, 95, 155, 875) 
 
 
 CONFIDENCE_LEVEL = 0.7
 
+PLAYER_NAME = 'Twenzen'
+
 /////////////////
 Y el centro de todo
 main.py :
-from modules.combat import  searchMob
+from modules.combat import  searchMob, initiate_combat_sequence
 from modules.resource_management import search_resources
-from modules.image_processing import capture_map_coordinates
+from modules.image_processing import capture_map_coordinates, capture_current_game_frame
+from modules.characters_tracking import load_character_templates, detect_character, click_on_character
 
 def main_menu():
     print("Seleccione una opción:")
     print("1. Recolectar recursos")
     print("2. Buscar mobs en la zona (Funcionalidad en desarrollo)")
     print("3. Leer chat del juego (Funcionalidad en desarrollo)")
-    print("3. Combate automatico (Funcionalidad en desarrollo)")
+    print("4. Combate automatico (Funcionalidad en desarrollo)")
+    print("5. Observa el entorno y obtiene datos (Funcionalidad en desarrollo)")
+    
     
     choice = input("Introduce el número de la opción deseada: ")
     return choice
 
-
+def track_and_click_character():
+    templates = load_character_templates()
+    frame = capture_current_game_frame()  # Necesitarás implementar esta función
+    character_center = detect_character(frame, templates)
+    if character_center is not None:
+        print(f"Personaje detectado en {character_center}. Haciendo clic en el personaje...")
+        click_on_character(character_center)
+    else:
+        print("Personaje no detectado.")
         
 
 def main():
@@ -574,14 +717,20 @@ def main():
         
         elif user_choice == '4':
             print("Esta funcionalidad aún está en desarrollo.")
+            initiate_combat_sequence()
+            
             # Aquí iría la lógica para combate
             # Ejemplo: read_game_chat() IR AL BANCO
+        
+        elif user_choice == '5':  # Supongamos que esta es la nueva opción para detectar y clickear en el personaje
+            track_and_click_character()
 
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
+        
+        
 
 if __name__ == "__main__":
     main()
-
 
 

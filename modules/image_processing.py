@@ -127,3 +127,17 @@ def capture_current_game_frame():
     frame = pg.screenshot(region=game_region)
     frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
     return frame
+
+def detect_map_edges(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blurred, 50, 150)
+    return edges
+
+def capture_combat_map_frame():
+    # Definir la región específica donde se espera que esté el mapa de combate.
+    # Ajusta los valores de la tupla según la posición y tamaño del mapa en tu juego.
+    combat_map_region = (100, 200, 800, 600)
+    frame = pg.screenshot(region=combat_map_region)
+    frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+    return frame

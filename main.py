@@ -1,4 +1,4 @@
-from modules.combat import  searchMob
+from modules.combat import  searchMob, initiate_combat_sequence
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
 from modules.characters_tracking import load_character_templates, detect_character, click_on_character
@@ -53,6 +53,8 @@ def main():
         
         elif user_choice == '4':
             print("Esta funcionalidad aún está en desarrollo.")
+            initiate_combat_sequence()
+            
             # Aquí iría la lógica para combate
             # Ejemplo: read_game_chat() IR AL BANCO
         
