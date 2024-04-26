@@ -10,6 +10,7 @@ RESOURCES_DIR = "resources"
 RESOURCES_TYPE =  {
     "trigo": "cereals",
     "castano": "wood",
+    "roble": "wood",
     "fresno": "wood",
     "nogal": "wood",
     "hierro": "minerals",
@@ -66,6 +67,10 @@ RESOURCE_PATHS = {
             "ojoIA/resources/wood/nogal1.PNG",
             "ojoIA/resources/wood/nogal2.PNG",
             "ojoIA/resources/wood/nogal3.PNG"
+        ],
+        "roble": [
+            "ojoIA/resources/wood/roble1.PNG",
+            "ojoIA/resources/wood/roble2.PNG",
         ]
     },
     "minerals": {
