@@ -63,17 +63,21 @@ def process_image_for_text(image_path):
         print(f"Error al procesar la imagen para obtener texto: {e}")
         return None
 
-def capture_and_process_image(region):
-    """Combina la captura de pantalla y el procesamiento de OCR."""
-    try:
-        screenshot_path = capture_screenshot(region, 'temp.png')
-        if screenshot_path:
-            text = process_image_for_text(screenshot_path)
-            return text
-        return None
-    except Exception as e:
-        print(f"Error al capturar y procesar la imagen: {e}")
-        return None
+def capture_and_process_image(region, image_name, output_folder):
+    """Captura una imagen de una región específica, la guarda y la procesa con OCR para extraer texto."""
+    # Comprueba y crea la carpeta de salida si no existe
+    output_path = f"{MAP_LOCATION_DIR}/{output_folder}"
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+    
+    # Captura y guarda la imagen
+    image_path = f"{output_path}/{image_name}.png"
+    image = pg.screenshot(region=region)
+    image.save(image_path)
+
+    # Procesar la imagen con OCR
+    text = pytesseract.image_to_string(cv2.imread(image_path))
+    return text, image_path
 
 def get_image_difference(image1_path, image2_path):
     """Obtiene la diferencia entre dos imágenes."""

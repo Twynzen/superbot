@@ -1,4 +1,5 @@
 import pytesseract
+import os
 # Configuración de la ruta de Tesseract-OCR
 TESSERACT_CMD_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD_PATH
@@ -111,4 +112,8 @@ COMBAT_MODE_REGION = (1610, 95, 155, 875)
 
 CONFIDENCE_LEVEL = 0.7
 
+#Datos de el personaje
 PLAYER_NAME = 'Twenzen'
+PLAYER_DATA_REGION = (800, 900, 700, 170) 
+
+SCREENSHOT_DIR = os.path.join("ojoIA", "screenshots")
