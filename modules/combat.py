@@ -104,7 +104,7 @@ def hover_and_detect_player_name(player_name):
                 x, y, w, h = ocr_result['left'][i], ocr_result['top'][i], ocr_result['width'][i], ocr_result['height'][i]
                 
                 # Dibujar la línea vertical 100 píxeles abajo del texto detectado
-                draw_vertical_line(current_frame, x + w // 2, y + h + 100, 20)
+                draw_vertical_line(current_frame, x + w // 2, y + h , 20)
                 
                 # Guardar la imagen con la línea para verificación
                 verification_image_path = f"{MAP_LOCATION_DIR}/verification_image_with_line.png"
@@ -207,6 +207,6 @@ def extract_general_text_field(general_text_field_region):
 
 def draw_vertical_line(image, center_x, base_y, line_height):
     """Dibuja una línea vertical corta en la posición x del personaje detectado, empezando desde base_y hacia abajo."""
-    adjusted_base_y = base_y   # Ajustar la posición y hacia abajo en 100 píxeles
-    cv2.line(image, (center_x, adjusted_base_y), (center_x, adjusted_base_y - line_height), (0, 0, 255), 2)  # Línea roja vertical
+    adjusted_base_y = base_y  +70
+    cv2.line(image, (center_x, adjusted_base_y), (center_x, adjusted_base_y - line_height), (0, 255, 0), 2)  
     return image
