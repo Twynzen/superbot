@@ -107,13 +107,14 @@ TOOLTIP_REGIONS = {
     'down': (960 - 50, 1080 - 200, 100, 50),
 }
 #Combat 
-COMBAT_MODE_REGION = (1610, 95, 155, 875) 
+COMBAT_MODE_REGION = (1610, 95, 155, 875)  # Conserva para operaciones de hover
+BOARD_REGION = (300, 25, 1300, 900) 
 
 
 CONFIDENCE_LEVEL = 0.7
 
 #Datos de el personaje
 PLAYER_NAME = 'Twenzen'
-PLAYER_DATA_REGION = (800, 900, 700, 170) 
+PLAYER_DATA_REGION = (715, 900, 120, 140) 
 
 SCREENSHOT_DIR = os.path.join("ojoIA", "screenshots")

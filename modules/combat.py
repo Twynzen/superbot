@@ -5,7 +5,7 @@ import pytesseract
 import numpy as np
 from modules.navigation import change_map
 from modules.image_processing import capture_screenshot, image_difference, capture_and_process_image
-from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION
+from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION
 from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges
 
 def check_combat_status():
@@ -67,43 +67,61 @@ def is_status_bar_detected(image_path):
     return red_detected and blue_detected    
 
 def hover_and_detect_player_name(player_name):
-    """
-    Mueve el cursor sobre los personajes en la barra y espera a que aparezcan los nombres en toda la pantalla.
-    Mientras está en hover, recopila datos del jugador, del botón verde y del campo de texto general.
-    """
-    print("Buscando Personaje y recopilando datos...")
-    combat_data = []
-
-    # Calcular las posiciones de hover basadas en COMBAT_MODE_REGION
-    start_x, start_y, width, height = COMBAT_MODE_REGION
-    num_steps = 16  # Cantidad de pasos para moverse a lo largo de la barra
-
-    for step in range(num_steps - 1, -1, -1):  # Invierte el orden del bucle
-        hover_position = (start_x + width // 2, start_y + step * (height // num_steps))
-        pg.moveTo(hover_position)
-        time.sleep(0.2)  # Agregar un pequeño retardo para permitir que la UI del juego responda al hover
-
-        # Toma una captura de pantalla de toda la pantalla
-        full_screen_screenshot = pg.screenshot()
-        
-        # Verificar si el nombre del jugador está presente en la pantalla
-        if player_name in pytesseract.image_to_string(np.array(full_screen_screenshot)):
-            print(f"{player_name} encontrado en la pantalla!")
-            
-            # Recopilar datos del jugador
-            player_data = extract_player_data(PLAYER_DATA_REGION)
-            combat_data.append(player_data)
-
-            # TODO: Implementar y llamar a la función para el botón verde
+    
+    
+           # TODO: Identificar enemigo y dibujar línea
+            # TODO: Validar casillas verdes de movimiento
+              # TODO: Implementar y llamar a la función para el botón verde
             # green_button_data = detect_green_button_text(GREEN_BUTTON_REGION)
             # combat_data.append(green_button_data)
 
             # TODO: Implementar y llamar a la función para el campo de texto general
             # general_text_data = extract_general_text_field(GENERAL_TEXT_FIELD_REGION)
             # combat_data.append(general_text_data)
+    """
+    Mueve el cursor sobre los personajes en la barra y espera a que aparezcan los nombres en toda la pantalla.
+    Mientras está en hover, recopila datos del jugador, del botón verde y del campo de texto general.
+    """
+    print("Buscando personaje y recopilando datos...")
+    combat_data = []
+    start_x, start_y, width, height = COMBAT_MODE_REGION
+    num_steps = 16
 
-            # Retornar los datos recopilados
-            return combat_data
+    for step in range(num_steps - 1, -1, -1):
+        # Mover el cursor en la barra lateral de COMBAT_MODE_REGION para activar el nombre
+        hover_position = (start_x + width // 2, start_y + step * (height // num_steps))
+        pg.moveTo(hover_position)
+        time.sleep(0.2)  # Tiempo para que el UI responda al hover
+
+        # Captura de BOARD_REGION después de cada movimiento de hover para detectar nombres en el tablero
+        board_screenshot = pg.screenshot(region=BOARD_REGION)
+        current_frame = np.array(board_screenshot)
+
+        # Utilizar pytesseract para realizar OCR en la imagen capturada de BOARD_REGION
+        ocr_result = pytesseract.image_to_data(current_frame, output_type=pytesseract.Output.DICT)
+        for i, text in enumerate(ocr_result['text']):
+            if player_name in text:
+                x, y, w, h = ocr_result['left'][i], ocr_result['top'][i], ocr_result['width'][i], ocr_result['height'][i]
+                
+                # Dibujar la línea vertical 100 píxeles abajo del texto detectado
+                draw_vertical_line(current_frame, x + w // 2, y + h + 100, 20)
+                
+                # Guardar la imagen con la línea para verificación
+                verification_image_path = f"{MAP_LOCATION_DIR}/verification_image_with_line.png"
+                cv2.imwrite(verification_image_path, current_frame)
+                print(f"Imagen con línea guardada para verificación en {verification_image_path}")
+                
+                cv2.imshow("Verification Image with Line", current_frame)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+
+                # Agregar los datos recopilados al conjunto de datos de combate
+                player_data = extract_player_data(PLAYER_DATA_REGION)
+                combat_data.append(player_data)
+                return combat_data  # Retorna después de detectar el primer nombre coincidente
+
+        time.sleep(0.5)  # Pequeña pausa para evitar sobrecargar el sistema
+        
 def capture_status_bar():
     # Define la región donde se espera que esté la barra de estado de los personajes.
     # Estas coordenadas son hipotéticas y deben ser ajustadas según tu juego.
@@ -186,3 +204,9 @@ def extract_general_text_field(general_text_field_region):
         general_text_field_region, "general_text", "general_text_folder"
     )
     return {"general_text": general_text, "image_path": general_text_image_path}
+
+def draw_vertical_line(image, center_x, base_y, line_height):
+    """Dibuja una línea vertical corta en la posición x del personaje detectado, empezando desde base_y hacia abajo."""
+    adjusted_base_y = base_y   # Ajustar la posición y hacia abajo en 100 píxeles
+    cv2.line(image, (center_x, adjusted_base_y), (center_x, adjusted_base_y - line_height), (0, 0, 255), 2)  # Línea roja vertical
+    return image
