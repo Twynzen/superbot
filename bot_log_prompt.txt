@@ -4,38 +4,60 @@ El proyecto se divide en estas carpetas
 API: Tiene 3 archivos aun en desarrollo esta sección: 
 
 bot_controller.py:
+from api.language_model import get_gpt_response
 from modules.resource_management import search_resources
 from modules.combat import searchMob
-from modules.characters_tracking import track_and_click_character
-# ...otros imports necesarios...
+from modules.characters_tracking import click_on_character
 
 def execute_action(action):
     if action == 'collect_resources':
         search_resources()
     elif action == 'search_mob':
         searchMob()
-    # ... otros casos
     elif action == 'track_character':
-        track_and_click_character()
-    # ... más acciones a futuro
+        click_on_character()
     else:
         print("Acción no reconocida.")
 
 def interpret_and_execute_gpt_response(gpt_response):
-    # Aquí vendría la lógica para interpretar la respuesta de la API
-    # y convertirlo en una acción.
     action = parse_gpt_response_to_action(gpt_response)
     execute_action(action)
 
 def parse_gpt_response_to_action(gpt_response):
-    # Esta función se encargará de traducir la respuesta de GPT en una acción
-    # Por ejemplo, si GPT sugiere recolectar recursos, devolvería 'collect_resources'
-    # ...
-    return action 
+    if 'recoge recursos' in gpt_response:
+        return 'collect_resources'
+    elif 'busca mobs' in gpt_response:
+        return 'search_mob'
+    elif 'rastrea personaje' in gpt_response:
+        return 'track_character'
+    else:
+        return 'unknown_action'
 
-
+////////////////////
 -game_api.py
--language_model.py
+////////////
+-language_model.py:
+
+from openai import OpenAI  # Asegúrate de que estás importando OpenAI correctamente
+import env  # Asumiendo que tienes un archivo env con tu clave API
+
+# Inicializa el cliente con la clave API
+client = OpenAI(api_key=env.API_KEY)
+
+def get_gpt_response(prompt):
+    # Usa el cliente para crear una respuesta de chat con el modelo GPT-4 Turbo
+    completion = client.completions.create(
+        model='gpt-4-turbo',
+        prompt=[
+            {"role": "system", "content": "You are a character in a role-playing game."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    # Retorna solo el contenido del mensaje de la respuesta
+    return completion.choices[0].message.content.strip()
+
+
+///////////////////
 
 mapLocation: tiene algunas carpetas que se crean para obtener imagenes del mapa
 combat_check_imagesguarda unas imagenes last_debug_image.png, last_reference_image.png
@@ -241,6 +263,8 @@ characters_tracking.py:
 import os
 import cv2
 import pyautogui as pg
+from modules.image_processing import  capture_current_game_frame
+
 
 CHARACTER_IMAGES_DIR = os.path.join("ojoIA", "characters", "main_character", "Static")
 
@@ -270,6 +294,17 @@ def detect_character(frame, templates):
 def click_on_character(center):
     if center is not None:
         pg.click(center)
+        
+def track_and_click_character():
+    templates = load_character_templates()
+    frame = capture_current_game_frame()  # Necesitarás implementar esta función
+    character_center = detect_character(frame, templates)
+    if character_center is not None:
+        print(f"Personaje detectado en {character_center}. Haciendo clic en el personaje...")
+        click_on_character(character_center)
+    else:
+        print("Personaje no detectado.")
+
 
 //////////////
 
@@ -715,34 +750,57 @@ SCREENSHOT_DIR = os.path.join("ojoIA", "screenshots")
 
 /////////////////
 Y el centro de todo
+
 main.py :
-from modules.combat import  searchMob, initiate_combat_sequence
+from modules.combat import searchMob, initiate_combat_sequence
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
-from modules.characters_tracking import load_character_templates, detect_character, click_on_character
+from modules.characters_tracking import load_character_templates, detect_character, click_on_character, track_and_click_character
+from api.bot_controller import interpret_and_execute_gpt_response
+from api.language_model import get_gpt_response
+import inspect
+import modules
+
+def list_module_functions(module):
+    functions_list = []
+    for name, obj in inspect.getmembers(module):
+        if inspect.isfunction(obj):
+            functions_list.append(name)
+    return functions_list
+
+def explore_project():
+    modules_list = [modules.combat, modules.resource_management, modules.characters_tracking]
+    all_functions = {}
+    for module in modules_list:
+        module_name = module.__name__.split('.')[-1]
+        all_functions[module_name] = list_module_functions(module)
+    return all_functions
 
 def main_menu():
     print("Seleccione una opción:")
     print("1. Recolectar recursos")
-    print("2. Buscar mobs en la zona (Funcionalidad en desarrollo)")
+    print("2. Buscar mobs en la zona")
     print("3. Leer chat del juego (Funcionalidad en desarrollo)")
-    print("4. Combate automatico (Funcionalidad en desarrollo)")
-    print("5. Observa el entorno y obtiene datos (Funcionalidad en desarrollo)")
-    
+    print("4. Combate automático")
+    print("5. Observa el entorno y obtiene datos")
+    print("6. Interactuar con GPT-4")
+    print("7. Explorar funciones del proyecto con GPT-4")
     
     choice = input("Introduce el número de la opción deseada: ")
     return choice
 
-def track_and_click_character():
-    templates = load_character_templates()
-    frame = capture_current_game_frame()  # Necesitarás implementar esta función
-    character_center = detect_character(frame, templates)
-    if character_center is not None:
-        print(f"Personaje detectado en {character_center}. Haciendo clic en el personaje...")
-        click_on_character(character_center)
-    else:
-        print("Personaje no detectado.")
-        
+def interact_with_gpt4():
+    user_prompt = input("Describe la misión o consulta para el personaje: ")
+    gpt_response = get_gpt_response(user_prompt)
+    print(f"GPT-4: {gpt_response}")
+    interpret_and_execute_gpt_response(gpt_response)
+
+def explore_with_gpt4():
+    all_functions = explore_project()
+    prompt = f"Estas son las funciones disponibles en el proyecto: {all_functions}. Sugiere acciones creativas que el bot pueda realizar utilizando estas funciones."
+    gpt_response = get_gpt_response(prompt)
+    print(f"GPT-4: {gpt_response}")
+    interpret_and_execute_gpt_response(gpt_response)
 
 def main():
     print("Iniciando el bot...")
@@ -757,34 +815,22 @@ def main():
         
         if user_choice == '1':
             while True:
-                search_resources()
-            
-
+             search_resources()
         elif user_choice == '2':
-           while True:
-               searchMob()
-        
+            while True:
+              searchMob()
         elif user_choice == '3':
             print("Esta funcionalidad aún está en desarrollo.")
-            # Aquí iría la lógica para leer el chat del juego.
-            # Ejemplo: read_game_chat()
-        
         elif user_choice == '4':
-            print("Esta funcionalidad aún está en desarrollo.")
             initiate_combat_sequence()
-            
-            # Aquí iría la lógica para combate
-            # Ejemplo: read_game_chat() IR AL BANCO
-        
-        elif user_choice == '5':  # Supongamos que esta es la nueva opción para detectar y clickear en el personaje
+        elif user_choice == '5':
             track_and_click_character()
-
+        elif user_choice == '6':
+            interact_with_gpt4()
+        elif user_choice == '7':
+            explore_with_gpt4()
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
-        
-        
 
 if __name__ == "__main__":
     main()
-
-

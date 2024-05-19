@@ -1,6 +1,8 @@
 import os
 import cv2
 import pyautogui as pg
+from modules.image_processing import  capture_current_game_frame
+
 
 CHARACTER_IMAGES_DIR = os.path.join("ojoIA", "characters", "main_character", "Static")
 
@@ -30,3 +32,13 @@ def detect_character(frame, templates):
 def click_on_character(center):
     if center is not None:
         pg.click(center)
+        
+def track_and_click_character():
+    templates = load_character_templates()
+    frame = capture_current_game_frame()  # Necesitarás implementar esta función
+    character_center = detect_character(frame, templates)
+    if character_center is not None:
+        print(f"Personaje detectado en {character_center}. Haciendo clic en el personaje...")
+        click_on_character(character_center)
+    else:
+        print("Personaje no detectado.")
