@@ -69,6 +69,7 @@ Modules tiene estos archivos.py:
 chat_management.py: por ahora vacio,
 
 combat.py:
+
 import pyautogui as pg
 import time
 import cv2
@@ -76,8 +77,15 @@ import pytesseract
 import numpy as np
 from modules.navigation import change_map
 from modules.image_processing import capture_screenshot, image_difference, capture_and_process_image
-from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION
+from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION
 from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges
+import torch
+from ultralytics import YOLO
+import mss
+import random
+
+class_colors = {}
+
 
 def check_combat_status():
     """Revisa si el bot está en combate, basado en la presencia de la barra de estado."""
@@ -138,43 +146,61 @@ def is_status_bar_detected(image_path):
     return red_detected and blue_detected    
 
 def hover_and_detect_player_name(player_name):
-    """
-    Mueve el cursor sobre los personajes en la barra y espera a que aparezcan los nombres en toda la pantalla.
-    Mientras está en hover, recopila datos del jugador, del botón verde y del campo de texto general.
-    """
-    print("Buscando Personaje y recopilando datos...")
-    combat_data = []
-
-    # Calcular las posiciones de hover basadas en COMBAT_MODE_REGION
-    start_x, start_y, width, height = COMBAT_MODE_REGION
-    num_steps = 16  # Cantidad de pasos para moverse a lo largo de la barra
-
-    for step in range(num_steps - 1, -1, -1):  # Invierte el orden del bucle
-        hover_position = (start_x + width // 2, start_y + step * (height // num_steps))
-        pg.moveTo(hover_position)
-        time.sleep(0.2)  # Agregar un pequeño retardo para permitir que la UI del juego responda al hover
-
-        # Toma una captura de pantalla de toda la pantalla
-        full_screen_screenshot = pg.screenshot()
-        
-        # Verificar si el nombre del jugador está presente en la pantalla
-        if player_name in pytesseract.image_to_string(np.array(full_screen_screenshot)):
-            print(f"{player_name} encontrado en la pantalla!")
-            
-            # Recopilar datos del jugador
-            player_data = extract_player_data(PLAYER_DATA_REGION)
-            combat_data.append(player_data)
-
-            # TODO: Implementar y llamar a la función para el botón verde
+    
+    
+           # TODO: Identificar enemigo y dibujar línea
+            # TODO: Validar casillas verdes de movimiento
+              # TODO: Implementar y llamar a la función para el botón verde
             # green_button_data = detect_green_button_text(GREEN_BUTTON_REGION)
             # combat_data.append(green_button_data)
 
             # TODO: Implementar y llamar a la función para el campo de texto general
             # general_text_data = extract_general_text_field(GENERAL_TEXT_FIELD_REGION)
             # combat_data.append(general_text_data)
+    """
+    Mueve el cursor sobre los personajes en la barra y espera a que aparezcan los nombres en toda la pantalla.
+    Mientras está en hover, recopila datos del jugador, del botón verde y del campo de texto general.
+    """
+    print("Buscando personaje y recopilando datos...")
+    combat_data = []
+    start_x, start_y, width, height = COMBAT_MODE_REGION
+    num_steps = 16
 
-            # Retornar los datos recopilados
-            return combat_data
+    for step in range(num_steps - 1, -1, -1):
+        # Mover el cursor en la barra lateral de COMBAT_MODE_REGION para activar el nombre
+        hover_position = (start_x + width // 2, start_y + step * (height // num_steps))
+        pg.moveTo(hover_position)
+        time.sleep(0.2)  # Tiempo para que el UI responda al hover
+
+        # Captura de BOARD_REGION después de cada movimiento de hover para detectar nombres en el tablero
+        board_screenshot = pg.screenshot(region=BOARD_REGION)
+        current_frame = np.array(board_screenshot)
+
+        # Utilizar pytesseract para realizar OCR en la imagen capturada de BOARD_REGION
+        ocr_result = pytesseract.image_to_data(current_frame, output_type=pytesseract.Output.DICT)
+        for i, text in enumerate(ocr_result['text']):
+            if player_name in text:
+                x, y, w, h = ocr_result['left'][i], ocr_result['top'][i], ocr_result['width'][i], ocr_result['height'][i]
+                
+                # Dibujar la línea vertical 100 píxeles abajo del texto detectado
+                draw_vertical_line(current_frame, x + w // 2, y + h , 20)
+                
+                # Guardar la imagen con la línea para verificación
+                verification_image_path = f"{MAP_LOCATION_DIR}/verification_image_with_line.png"
+                cv2.imwrite(verification_image_path, current_frame)
+                print(f"Imagen con línea guardada para verificación en {verification_image_path}")
+                
+                cv2.imshow("Verification Image with Line", current_frame)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+
+                # Agregar los datos recopilados al conjunto de datos de combate
+                player_data = extract_player_data(PLAYER_DATA_REGION)
+                combat_data.append(player_data)
+                return combat_data  # Retorna después de detectar el primer nombre coincidente
+
+        time.sleep(0.5)  # Pequeña pausa para evitar sobrecargar el sistema
+        
 def capture_status_bar():
     # Define la región donde se espera que esté la barra de estado de los personajes.
     # Estas coordenadas son hipotéticas y deben ser ajustadas según tu juego.
@@ -202,7 +228,6 @@ def searchMob():
      else:
          print("El cambio de mapa fue exitoso.")
             # Ejemplo: find_mobs()
-
 
 def initiate_combat_sequence():
     # Asegúrate de que estás en combate
@@ -257,6 +282,77 @@ def extract_general_text_field(general_text_field_region):
         general_text_field_region, "general_text", "general_text_folder"
     )
     return {"general_text": general_text, "image_path": general_text_image_path}
+
+
+def draw_vertical_line(image, center_x, base_y, line_height):
+    """Dibuja una línea vertical corta en la posición x del personaje detectado, empezando desde base_y hacia abajo."""
+    adjusted_base_y = base_y  +70
+    cv2.line(image, (center_x, adjusted_base_y), (center_x, adjusted_base_y - line_height), (0, 255, 0), 2)  
+    return image
+
+
+def get_color_for_class(class_name):
+    if class_name not in class_colors:
+        class_colors[class_name] = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    return class_colors[class_name]
+
+def detect_objects_in_real_time():
+    # Cargar el modelo entrenado
+    model = YOLO("C:\\Users\\Daniel\\Desktop\\Daniel\\labellmg\\datasetCombat\\runs\\detect\\train2\\weights\\best.pt")
+
+    # Inicializar el capturador de pantalla
+    sct = mss.mss()
+    last_detections = {}
+    screenshot_taken = False  # Flag para verificar si el pantallazo ya fue tomado
+
+    while True:
+        # Capturar la pantalla
+        screenshot = sct.grab(GAME_SCREEN_REGION)
+        img = np.array(screenshot)
+
+        # Convertir la imagen de BGR a RGB (mss devuelve una imagen en formato BGR)
+        img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+
+        # Hacer predicciones
+        results = model(img)
+
+        current_detections = {}
+        log_entries = []
+
+        # Dibujar las predicciones en la imagen
+        for result in results[0].boxes.data:  # Acceder a los resultados como tensores
+            x1, y1, x2, y2, conf, cls = result
+            x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
+            class_name = model.names[int(cls)]
+            color = get_color_for_class(class_name)
+            x_center, y_center = (x1 + x2) // 2, (y1 + y2) // 2
+
+            current_detections[class_name] = (x_center, y_center, conf)
+
+            # Solo dibujar si la posición ha cambiado significativamente
+            if class_name not in last_detections or (x_center, y_center) != last_detections[class_name][:2]:
+                cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
+                cv2.putText(img, f'{class_name} {conf:.2f}', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+            # Preparar la entrada de log
+            log_entries.append(f"- {class_name} at ({x_center}, {y_center}) with confidence {conf:.2f}")
+
+        last_detections = current_detections
+
+        # Imprimir los logs formateados
+        if log_entries:
+            print("\nDetected objects:")
+            print("\n".join(log_entries))
+
+        # Tomar y guardar el pantallazo solo una vez
+        if not screenshot_taken and current_detections:
+            cv2.imwrite("screenshot.png", img)
+            screenshot_taken = True
+            print("Pantallazo guardado como screenshot.png")
+
+        # Pausa de 3 segundos
+        time.sleep(3)
+
 //////////////
 characters_tracking.py:
 
@@ -480,8 +576,11 @@ def change_map(path):
 //////////////
 resource_management.py:
 import pyautogui as pg
+from modules.combat import check_combat_status
+from modules.navigation import change_map
+from modules.image_processing import capture_map_coordinates
 import time
-from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME
+from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME, RESOURCES_TYPE,DIRECTION_PATH_ESCARAHOJA_ZAAP,DIRECTION_PATH_ROBLE
 
 EXCEPTIONS = {
         'fresno': {
@@ -493,22 +592,24 @@ EXCEPTIONS = {
     }
 
 
-def find_resource_on_screen(resource_type):
-    """Busca los recursos en pantalla y devuelve la ubicación si los encuentra."""
-    paths = RESOURCE_PATHS.get(resource_type, [])
+def find_resource_on_screen(resource_type, category):
+    """Busca los recursos en pantalla por tipo y categoría y devuelve la ubicación si los encuentra."""
+    category_dict = RESOURCE_PATHS.get(category, {})
+    paths = category_dict.get(resource_type, [])
     for path in paths:
         try:
             location = pg.locateCenterOnScreen(path, confidence=CONFIDENCE_LEVEL)
             if location:
-                print(f"Recurso {resource_type} encontrado en {path}.")
+                print(f"Recurso de tipo {resource_type} en categoría {category} encontrado en {path}.")
                 return location
         except pg.ImageNotFoundException:
             continue  # Simplemente continúa con la siguiente imagen
         except Exception as e:
-            print(f"Error al buscar el recurso {resource_type} en {path}: {e}")
+            print(f"Error al buscar el recurso de tipo {resource_type} en categoría {category} en {path}: {e}")
     # Si termina el bucle y no encuentra nada, imprime un mensaje general.
-    print(f"Recurso {resource_type} no encontrado.")
+    print(f"Recurso de tipo {resource_type} en categoría {category} no encontrado.")
     return None
+
 
 
 def apply_exceptions(resource_type, location):
@@ -540,7 +641,7 @@ def apply_exceptions(resource_type, location):
                 return new_location
 
     return (location.x, location.y)
-def collect_resource(resource_type):
+
     """Intenta recolectar un recurso dado si se encuentra en pantalla."""
     location = find_resource_on_screen(resource_type)
     if location:
@@ -554,19 +655,59 @@ def collect_resource(resource_type):
         else:
             print(f"Recurso {resource_type} ignorado debido a una excepción.")
     return False
+def collect_resource(resource_type):
+    """Intenta recolectar un recurso dado si se encuentra en pantalla."""
+    category = RESOURCES_TYPE.get(resource_type, None)
+    if category is None:
+        print(f"Categoría no definida para el recurso {resource_type}.")
+        return False  # Salir si no hay categoría definida.
 
+    location = find_resource_on_screen(resource_type, category)
+    if location:
+        # Aplica las excepciones antes de hacer clic.
+        new_location = apply_exceptions(resource_type, location)
+        if new_location:
+            pg.click(new_location)
+            time.sleep(WAIT_TIME)
+            print(f"Recolectado {resource_type}.")
+            return True
+        else:
+            print(f"Recurso {resource_type} ignorado debido a una excepción.")
+    return False
 def search_and_collect_resources():
     """Bucle principal para buscar y recolectar recursos repetidamente hasta que no encuentre más."""
-    while True:
-        resources_found = False
-        for resource_type in RESOURCE_PATHS.keys():
-            while collect_resource(resource_type):  # Continúa intentando recolectar mientras haya recursos.
-                resources_found = True
-                print(f"Recolectado {resource_type}. Volviendo a buscar {resource_type}...")
-        
-        if not resources_found:
-            print("No se encontraron más recursos. Intentando cambiar de mapa...")
-            break  # Si en una pasada completa no se encuentra ningún recurso, rompe el bucle.
+    resources_found = False
+    for resource_type in RESOURCES_TYPE:  # Solo iterar sobre los tipos definidos con categoría
+        while collect_resource(resource_type):  # Continúa intentando recolectar mientras haya recursos.
+            resources_found = True
+            print(f"Recolectado {resource_type}. Volviendo a buscar {resource_type}...")
+    
+    if not resources_found:
+        print("No se encontraron más recursos. Intentando cambiar de mapa...")
+        return False
+    return True
+
+def search_resources():
+        resources_collected = search_and_collect_resources()
+        if not resources_collected:
+            print("No se encontraron recursos. Intentando cambiar de mapa...")
+            coordinates_before_change = capture_map_coordinates()
+            print(f"Coordenadas antes de cambiar de mapa: {coordinates_before_change}")
+
+            change_map(DIRECTION_PATH_ROBLE)
+            time.sleep(WAIT_TIME)  # Espera después de intentar cambiar de mapa.
+
+            coordinates_after_change = capture_map_coordinates()
+            print(f"Coordenadas después de intentar cambiar de mapa: {coordinates_after_change}")
+
+            if coordinates_before_change == coordinates_after_change:
+                print("No se detectaron cambios en la posición del mapa. Verificando modo de combate...")
+                check_combat_status()  # Verifica continuamente si está en combate
+            else:
+                print("El cambio de mapa fue exitoso.")
+        time.sleep(2)  # Pequeña pausa antes de mostrar de nuevo el menú
+
+
 
 //////////////
 ojoIAtiene resources, donde extraemos las imagenes de los recursos para que con las librerias comparemos y demos click de estar en la Lista
@@ -628,7 +769,8 @@ y los otros vacios:
 helpers.py y logger.py
 //////////////
 
-al final tenemos el config.py:import pytesseract
+al final tenemos el config.py:
+import pytesseract
 import os
 # Configuración de la ruta de Tesseract-OCR
 TESSERACT_CMD_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -650,6 +792,7 @@ RESOURCES_TYPE =  {
 }
 #region
 REGION_TO_CAPTURE = (0, 65, 100 , 90-50) 
+GAME_SCREEN_REGION = {"top": 0, "left": 0, "width": 1920, "height": 580}
 
 
 
@@ -670,6 +813,14 @@ DIRECTION_PATH_ESCARAHOJA_ZAAP = [
     'down', 'up', 'up', 'right', 'right', 'up', 'right', 'up', 'up', 'left',
     'up', 'right', 'up', 'left'
 ]
+#-11 ,-8
+DIRECTION_PATH_ROBLE = [
+    'right', 'up', 'right', 'down', 'right', 'up', 
+    'up', 'up', 'up', 'up', 'right', 'up', 'left', 'up', 
+    'right', 'up', 'left', 'up', 'left', 'left',
+    'left', 'left', 'left', 'left', 'left', 'down', 'down', 'left', 
+    'down', 'right', 'down', 'down', 'down', 'right', 'right', 'down','down','down', 'right'
+]
 
 # Rutas a imágenes específicas de recursos
 RESOURCE_PATHS = {
@@ -680,6 +831,11 @@ RESOURCE_PATHS = {
             "ojoIA/resources/cereals/trigo3.PNG",
             "ojoIA/resources/cereals/trigo4.PNG",
             "ojoIA/resources/cereals/trigo5.PNG"
+        ],
+         "cebada": [
+            "ojoIA/resources/cereals/cebada1.PNG",
+            "ojoIA/resources/cereals/cebada2.PNG",
+
         ]
     },
     "wood": {
@@ -704,15 +860,17 @@ RESOURCE_PATHS = {
             "ojoIA/resources/wood/roble2.PNG",
         ]
     },
-    "minerals": {
-        "hierro": [
-            "ojoIA/resources/minerals/hierro1.PNG",
-            "ojoIA/resources/minerals/hierro2.PNG",
-            "ojoIA/resources/minerals/hierro3.PNG",
-            "ojoIA/resources/minerals/hierro4.PNG",
-            "ojoIA/resources/minerals/hierro5.PNG"
-        ]
-    },
+    
+    #"minerals": {
+    #    "hierro": [
+    #        "ojoIA/resources/minerals/hierro1.PNG",
+    #        "ojoIA/resources/minerals/hierro2.PNG",
+    #        "ojoIA/resources/minerals/hierro3.PNG",
+    #        "ojoIA/resources/minerals/hierro4.PNG",
+    #        "ojoIA/resources/minerals/hierro5.PNG"
+    #    ]
+    # }
+    
     "herbage": {
         "ortiga": [
             "ojoIA/resources/herbage/ortiga1.PNG",
@@ -737,22 +895,24 @@ TOOLTIP_REGIONS = {
     'down': (960 - 50, 1080 - 200, 100, 50),
 }
 #Combat 
-COMBAT_MODE_REGION = (1610, 95, 155, 875) 
+COMBAT_MODE_REGION = (1610, 95, 155, 875)  # Conserva para operaciones de hover
+BOARD_REGION = (300, 25, 1300, 900) 
 
 
 CONFIDENCE_LEVEL = 0.7
 
 #Datos de el personaje
 PLAYER_NAME = 'Twenzen'
-PLAYER_DATA_REGION = (800, 900, 700, 170) 
+PLAYER_DATA_REGION = (715, 900, 120, 140) 
 
 SCREENSHOT_DIR = os.path.join("ojoIA", "screenshots")
+
 
 /////////////////
 Y el centro de todo
 
 main.py :
-from modules.combat import searchMob, initiate_combat_sequence
+from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
 from modules.characters_tracking import load_character_templates, detect_character, click_on_character, track_and_click_character
@@ -785,7 +945,8 @@ def main_menu():
     print("5. Observa el entorno y obtiene datos")
     print("6. Interactuar con GPT-4")
     print("7. Explorar funciones del proyecto con GPT-4")
-    
+    print("8. Activar detección en tiempo real (YOLO)")
+
     choice = input("Introduce el número de la opción deseada: ")
     return choice
 
@@ -809,16 +970,16 @@ def main():
         print(f"Coordenadas iniciales del mapa al iniciar: {initial_coordinates}")
     else:
         print("No se pudieron capturar las coordenadas iniciales del mapa.")
-    
+
     while True:
         user_choice = main_menu()
-        
+
         if user_choice == '1':
             while True:
-             search_resources()
+                search_resources()
         elif user_choice == '2':
             while True:
-              searchMob()
+                searchMob()
         elif user_choice == '3':
             print("Esta funcionalidad aún está en desarrollo.")
         elif user_choice == '4':
@@ -829,6 +990,8 @@ def main():
             interact_with_gpt4()
         elif user_choice == '7':
             explore_with_gpt4()
+        elif user_choice == '8':
+            detect_objects_in_real_time()
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
 

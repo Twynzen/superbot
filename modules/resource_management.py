@@ -3,7 +3,7 @@ from modules.combat import check_combat_status
 from modules.navigation import change_map
 from modules.image_processing import capture_map_coordinates
 import time
-from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME, RESOURCES_TYPE,DIRECTION_PATH_ESCARAHOJA_ZAAP
+from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME, RESOURCES_TYPE,DIRECTION_PATH_ESCARAHOJA_ZAAP,DIRECTION_PATH_ROBLE
 
 EXCEPTIONS = {
         'fresno': {
@@ -117,7 +117,7 @@ def search_resources():
             coordinates_before_change = capture_map_coordinates()
             print(f"Coordenadas antes de cambiar de mapa: {coordinates_before_change}")
 
-            change_map(DIRECTION_PATH_ESCARAHOJA_ZAAP)
+            change_map(DIRECTION_PATH_ROBLE)
             time.sleep(WAIT_TIME)  # Espera después de intentar cambiar de mapa.
 
             coordinates_after_change = capture_map_coordinates()

@@ -20,6 +20,7 @@ RESOURCES_TYPE =  {
 }
 #region
 REGION_TO_CAPTURE = (0, 65, 100 , 90-50) 
+GAME_SCREEN_REGION = {"top": 0, "left": 0, "width": 1920, "height": 580}
 
 
 
@@ -40,6 +41,14 @@ DIRECTION_PATH_ESCARAHOJA_ZAAP = [
     'down', 'up', 'up', 'right', 'right', 'up', 'right', 'up', 'up', 'left',
     'up', 'right', 'up', 'left'
 ]
+#-11 ,-8
+DIRECTION_PATH_ROBLE = [
+    'right', 'up', 'right', 'down', 'right', 'up', 
+    'up', 'up', 'up', 'up', 'right', 'up', 'left', 'up', 
+    'right', 'up', 'left', 'up', 'left', 'left',
+    'left', 'left', 'left', 'left', 'left', 'down', 'down', 'left', 
+    'down', 'right', 'down', 'down', 'down', 'right', 'right', 'down','down','down', 'right'
+]
 
 # Rutas a imágenes específicas de recursos
 RESOURCE_PATHS = {
@@ -50,6 +59,11 @@ RESOURCE_PATHS = {
             "ojoIA/resources/cereals/trigo3.PNG",
             "ojoIA/resources/cereals/trigo4.PNG",
             "ojoIA/resources/cereals/trigo5.PNG"
+        ],
+         "cebada": [
+            "ojoIA/resources/cereals/cebada1.PNG",
+            "ojoIA/resources/cereals/cebada2.PNG",
+
         ]
     },
     "wood": {
@@ -74,15 +88,17 @@ RESOURCE_PATHS = {
             "ojoIA/resources/wood/roble2.PNG",
         ]
     },
-    "minerals": {
-        "hierro": [
-            "ojoIA/resources/minerals/hierro1.PNG",
-            "ojoIA/resources/minerals/hierro2.PNG",
-            "ojoIA/resources/minerals/hierro3.PNG",
-            "ojoIA/resources/minerals/hierro4.PNG",
-            "ojoIA/resources/minerals/hierro5.PNG"
-        ]
-    },
+    
+    #"minerals": {
+    #    "hierro": [
+    #        "ojoIA/resources/minerals/hierro1.PNG",
+    #        "ojoIA/resources/minerals/hierro2.PNG",
+    #        "ojoIA/resources/minerals/hierro3.PNG",
+    #        "ojoIA/resources/minerals/hierro4.PNG",
+    #        "ojoIA/resources/minerals/hierro5.PNG"
+    #    ]
+    # }
+    
     "herbage": {
         "ortiga": [
             "ojoIA/resources/herbage/ortiga1.PNG",

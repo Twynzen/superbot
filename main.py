@@ -1,4 +1,4 @@
-from modules.combat import searchMob, initiate_combat_sequence
+from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
 from modules.characters_tracking import load_character_templates, detect_character, click_on_character, track_and_click_character
@@ -31,7 +31,8 @@ def main_menu():
     print("5. Observa el entorno y obtiene datos")
     print("6. Interactuar con GPT-4")
     print("7. Explorar funciones del proyecto con GPT-4")
-    
+    print("8. Activar detección en tiempo real (YOLO)")
+
     choice = input("Introduce el número de la opción deseada: ")
     return choice
 
@@ -55,16 +56,16 @@ def main():
         print(f"Coordenadas iniciales del mapa al iniciar: {initial_coordinates}")
     else:
         print("No se pudieron capturar las coordenadas iniciales del mapa.")
-    
+
     while True:
         user_choice = main_menu()
-        
+
         if user_choice == '1':
             while True:
-             search_resources()
+                search_resources()
         elif user_choice == '2':
             while True:
-              searchMob()
+                searchMob()
         elif user_choice == '3':
             print("Esta funcionalidad aún está en desarrollo.")
         elif user_choice == '4':
@@ -75,6 +76,8 @@ def main():
             interact_with_gpt4()
         elif user_choice == '7':
             explore_with_gpt4()
+        elif user_choice == '8':
+            detect_objects_in_real_time()
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
 

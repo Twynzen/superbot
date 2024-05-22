@@ -5,8 +5,15 @@ import pytesseract
 import numpy as np
 from modules.navigation import change_map
 from modules.image_processing import capture_screenshot, image_difference, capture_and_process_image
-from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION
+from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION
 from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges
+import torch
+from ultralytics import YOLO
+import mss
+import random
+
+class_colors = {}
+
 
 def check_combat_status():
     """Revisa si el bot está en combate, basado en la presencia de la barra de estado."""
@@ -150,7 +157,6 @@ def searchMob():
          print("El cambio de mapa fue exitoso.")
             # Ejemplo: find_mobs()
 
-
 def initiate_combat_sequence():
     # Asegúrate de que estás en combate
     if check_combat_status():
@@ -205,8 +211,72 @@ def extract_general_text_field(general_text_field_region):
     )
     return {"general_text": general_text, "image_path": general_text_image_path}
 
+
 def draw_vertical_line(image, center_x, base_y, line_height):
     """Dibuja una línea vertical corta en la posición x del personaje detectado, empezando desde base_y hacia abajo."""
     adjusted_base_y = base_y  +70
     cv2.line(image, (center_x, adjusted_base_y), (center_x, adjusted_base_y - line_height), (0, 255, 0), 2)  
     return image
+
+
+def get_color_for_class(class_name):
+    if class_name not in class_colors:
+        class_colors[class_name] = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    return class_colors[class_name]
+
+def detect_objects_in_real_time():
+    # Cargar el modelo entrenado
+    model = YOLO("C:\\Users\\Daniel\\Desktop\\Daniel\\labellmg\\datasetCombat\\runs\\detect\\train2\\weights\\best.pt")
+
+    # Inicializar el capturador de pantalla
+    sct = mss.mss()
+    last_detections = {}
+    screenshot_taken = False  # Flag para verificar si el pantallazo ya fue tomado
+
+    while True:
+        # Capturar la pantalla
+        screenshot = sct.grab(GAME_SCREEN_REGION)
+        img = np.array(screenshot)
+
+        # Convertir la imagen de BGR a RGB (mss devuelve una imagen en formato BGR)
+        img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+
+        # Hacer predicciones
+        results = model(img)
+
+        current_detections = {}
+        log_entries = []
+
+        # Dibujar las predicciones en la imagen
+        for result in results[0].boxes.data:  # Acceder a los resultados como tensores
+            x1, y1, x2, y2, conf, cls = result
+            x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
+            class_name = model.names[int(cls)]
+            color = get_color_for_class(class_name)
+            x_center, y_center = (x1 + x2) // 2, (y1 + y2) // 2
+
+            current_detections[class_name] = (x_center, y_center, conf)
+
+            # Solo dibujar si la posición ha cambiado significativamente
+            if class_name not in last_detections or (x_center, y_center) != last_detections[class_name][:2]:
+                cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
+                cv2.putText(img, f'{class_name} {conf:.2f}', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+            # Preparar la entrada de log
+            log_entries.append(f"- {class_name} at ({x_center}, {y_center}) with confidence {conf:.2f}")
+
+        last_detections = current_detections
+
+        # Imprimir los logs formateados
+        if log_entries:
+            print("\nDetected objects:")
+            print("\n".join(log_entries))
+
+        # Tomar y guardar el pantallazo solo una vez
+        if not screenshot_taken and current_detections:
+            cv2.imwrite("screenshot.png", img)
+            screenshot_taken = True
+            print("Pantallazo guardado como screenshot.png")
+
+        # Pausa de 3 segundos
+        time.sleep(3)
