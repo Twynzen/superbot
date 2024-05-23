@@ -10,17 +10,25 @@ SCREENSHOTS_DIR = "ojoIA"
 RESOURCES_DIR = "resources"
 RESOURCES_TYPE =  {
     "trigo": "cereals",
+    "cebada": "cereals",
+    "avena": "cereals",
+    
     "castano": "wood",
     "roble": "wood",
     "fresno": "wood",
     "nogal": "wood",
     "hierro": "minerals",
     "ortiga": "herbage",
-    "salvia": "herbage"
+    "salvia": "herbage",
+    "trebol": "herbage"
+    
 }
 #region
 REGION_TO_CAPTURE = (0, 65, 100 , 90-50) 
 GAME_SCREEN_REGION = {"top": 0, "left": 0, "width": 1920, "height": 580}
+
+
+
 
 
 
@@ -40,7 +48,7 @@ DIRECTION_PATH_ABSTRUB_ZAAP = [
 DIRECTION_PATH_ESCARAHOJA_ZAAP = [
     'right', 'right', 'up', 'up', 'right', 'up', 'up', 'right', 'down', 'down',
     'down', 'up', 'up', 'right', 'right', 'up', 'right', 'up', 'up', 'left',
-    'up', 'right', 'up', 'left'
+    'up', 'right', 'up', 'left','up', 'up', 'right','right', 'down','left','left','left','left',
 ]
 #-11 ,-8
 DIRECTION_PATH_ROBLE = [
@@ -49,6 +57,11 @@ DIRECTION_PATH_ROBLE = [
     'right', 'up', 'left', 'up', 'left', 'left',
     'left', 'left', 'left', 'left', 'left', 'down', 'down', 'left', 
     'down', 'right', 'down', 'down', 'down', 'right', 'right', 'down','down','down', 'right'
+]
+
+DIRECTION_PATH_TREBOL = [
+   'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down',
+   'right','right','right', 'right', 'up', 'right', 'right', 
 ]
 
 # Rutas a imágenes específicas de recursos
@@ -64,6 +77,10 @@ RESOURCE_PATHS = {
          "cebada": [
             "ojoIA/resources/cereals/cebada1.PNG",
             "ojoIA/resources/cereals/cebada2.PNG",
+
+        ],
+         "avena": [
+            "ojoIA/resources/cereals/avena1.PNG",
 
         ]
     },
@@ -111,6 +128,10 @@ RESOURCE_PATHS = {
         "salvia": [
             "ojoIA/resources/herbage/salvia1.PNG",
             "ojoIA/resources/herbage/salvia2.PNG"
+        ],
+         "trebol": [
+            "ojoIA/resources/herbage/trebol1.PNG",
+            "ojoIA/resources/herbage/trebol2.PNG"
         ]
     }
 }
