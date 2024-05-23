@@ -1,3 +1,5 @@
+# main.py
+
 from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
@@ -61,11 +63,9 @@ def main():
         user_choice = main_menu()
 
         if user_choice == '1':
-            while True:
-                search_resources()
+            search_resources()
         elif user_choice == '2':
-            while True:
-                searchMob()
+            searchMob()
         elif user_choice == '3':
             print("Esta funcionalidad aún está en desarrollo.")
         elif user_choice == '4':

@@ -29,13 +29,14 @@ IMAGE_OFFSET = 25
 WAIT_TIME = 6
 SCREENSHOT_SIZE = 100
 
+# 5, -8
 DIRECTION_PATH_ABSTRUB_ZAAP = [
     'left', 'left', 'down', 'right', 'right', 'right', 'up', 'up', 'left', 'left',
     'left', 'down', 'left', 'left', 'down', 'right', 'down', 'left', 'right', 'right',
     'up', 'right', 'down', 'right', 'up','right','down','right','up','up', 'up','up', 'up',
     'left','down','left','up','left','down','left','up','left','left','down','right','down','left','down',
 ]
-
+#-1 , 24
 DIRECTION_PATH_ESCARAHOJA_ZAAP = [
     'right', 'right', 'up', 'up', 'right', 'up', 'up', 'right', 'down', 'down',
     'down', 'up', 'up', 'right', 'right', 'up', 'right', 'up', 'up', 'left',
@@ -134,3 +135,7 @@ PLAYER_NAME = 'Twenzen'
 PLAYER_DATA_REGION = (715, 900, 120, 140) 
 
 SCREENSHOT_DIR = os.path.join("ojoIA", "screenshots")
+
+ZAAPS = [
+    "0,0", "5,-8", "-1,24", "-11,-8"
+]
