@@ -575,6 +575,7 @@ def change_map(path):
 
 //////////////
 resource_management.py:
+
 import pyautogui as pg
 from modules.combat import check_combat_status
 from modules.navigation import change_map, move_to_position
@@ -814,10 +815,9 @@ def choose_predefined_position():
     else:
         print("Selección inválida. Por favor, intente de nuevo.")
         return choose_predefined_position()
+/////////////////////
 
 
-
-//////////////
 ojoIAtiene resources, donde extraemos las imagenes de los recursos para que con las librerias comparemos y demos click de estar en la Lista
 y otras imagenes como
 combat_indicator.pngcombat_status.indicator.PNG
@@ -878,6 +878,7 @@ helpers.py y logger.py
 //////////////
 
 al final tenemos el config.py:
+
 import pytesseract
 import os
 # Configuración de la ruta de Tesseract-OCR
