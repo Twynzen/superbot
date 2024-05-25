@@ -4,6 +4,7 @@ El proyecto se divide en estas carpetas
 API: Tiene 3 archivos aun en desarrollo esta sección: 
 
 bot_controller.py:
+
 from api.language_model import get_gpt_response
 from modules.resource_management import search_resources
 from modules.combat import searchMob
@@ -33,6 +34,7 @@ def parse_gpt_response_to_action(gpt_response):
     else:
         return 'unknown_action'
 
+
 ////////////////////
 -game_api.py
 ////////////
@@ -57,6 +59,7 @@ def get_gpt_response(prompt):
     return completion.choices[0].message.content.strip()
 
 
+
 ///////////////////
 
 mapLocation: tiene algunas carpetas que se crean para obtener imagenes del mapa
@@ -66,9 +69,21 @@ también tiene otra imagen llamada map_coordinates.png puede que esta sea una im
 
 modules:
 Modules tiene estos archivos.py:
-chat_management.py: por ahora vacio,
+
+////////////////////
+chat_management.py: 
+
+def send_chat_message(message):
+    """Envía un mensaje a través del chat del juego."""
+    # Aquí iría la lógica para enviar mensajes en el chat del juego.
+    pass
+
+def read_chat():
+    """Lee los mensajes del chat del juego."""
+    # Aquí iría la lógica para leer mensajes del chat.
+    pass
+
 /////////////////////////////
-combat.py:
 import pyautogui as pg
 import time
 import cv2
@@ -354,7 +369,6 @@ def detect_objects_in_real_time():
 
 //////////////
 characters_tracking.py:
-
 import os
 import cv2
 import pyautogui as pg
@@ -401,14 +415,18 @@ def track_and_click_character():
         print("Personaje no detectado.")
 
 
+
 //////////////
 
+
+image_processing.py:
+import time
 import pytesseract
 import os
 import numpy as np
 import cv2
 import pyautogui as pg
-from config import SCREENSHOTS_DIR, TESSERACT_CMD_PATH, MAP_LOCATION_DIR
+from config import SCREENSHOTS_DIR, TESSERACT_CMD_PATH, MAP_LOCATION_DIR, CONFIDENCE_LEVEL, ZAAP_IMAGES_DIR,WAIT_TIME
 from PIL import Image, ImageChops, UnidentifiedImageError
 
 
@@ -551,43 +569,160 @@ def capture_combat_map_frame():
     frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
     return frame
 
+def find_zaap_and_click():
+    """
+    Busca un zaap en la pantalla y hace clic en él si se encuentra.
+    """
+    for zaap_image in os.listdir(ZAAP_IMAGES_DIR):
+        zaap_path = os.path.join(ZAAP_IMAGES_DIR, zaap_image)
+        try:
+            location = pg.locateCenterOnScreen(zaap_path, confidence=CONFIDENCE_LEVEL)
+            if location:
+                pg.click(location)
+                time.sleep(WAIT_TIME)
+                return True
+        except pg.ImageNotFoundException:
+            continue  # Si no se encuentra la imagen, pasa a la siguiente
+        except Exception as e:
+            print(f"Error al buscar el zaap en {zaap_path}: {e}")
+    return False
 
 //////////////
 
 navigation.py:
 # navigation.py
+import pytesseract
+import pyperclip
 
+import pygetwindow as gw
 import pyautogui as pg
+import os
 import time
-from config import TOOLTIP_REGIONS, WAIT_TIME
+from config import TOOLTIP_REGIONS, WAIT_TIME, ZAAP_IMAGES_DIR, TELEPORT_BUTTON_REGION, ZAAPS, ZAAP_INTERFACE_REGION, ZAAP_LOCATIONS
 from modules.image_processing import capture_map_coordinates
 
-
-CURRENT_DIRECTION_INDEX = 0
+TESSERACT_CMD_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD_PATH
 
 def clean_coordinates(coord):
-    """
-    Limpia y convierte las coordenadas capturadas en un formato adecuado.
-    """
     coord = coord.strip().split(',')
     x = ''.join(filter(lambda c: c.isdigit() or c == '-', coord[0]))
     y = ''.join(filter(lambda c: c.isdigit() or c == '-', coord[1]))
     return f"{x},{y}"
 
+def calculate_distance(pos1, pos2):
+    x1, y1 = map(int, clean_coordinates(pos1).split(','))
+    x2, y2 = map(int, clean_coordinates(pos2).split(','))
+    return abs(x1 - x2) + abs(y1 - y2)
+
+
+def get_closest_zaap(position):
+    min_distance = float('inf')
+    closest_zaap = None
+    for zaap in ZAAPS:
+        distance = calculate_distance(position, zaap)
+        if distance < min_distance:
+            min_distance = distance
+            closest_zaap = zaap
+    return closest_zaap
+
+
+def get_zaap_name_by_coordinates(coordinates):
+    coordinates = clean_coordinates(coordinates) 
+    for zaap in ZAAP_LOCATIONS:
+        if clean_coordinates(zaap["coordenadas"]) == coordinates:
+            return zaap["nombre"]
+    print(f"No se encontró un Zaap con las coordenadas {coordinates}")
+    return None
+
+def detect_and_click_zaap():
+    for zaap_image in os.listdir(ZAAP_IMAGES_DIR):
+        zaap_image_path = os.path.join(ZAAP_IMAGES_DIR, zaap_image)
+        try:
+            location = pg.locateCenterOnScreen(zaap_image_path, confidence=0.8)
+            if location:
+                pg.click(location)
+                time.sleep(WAIT_TIME)
+                return True
+        except pg.ImageNotFoundException:
+            continue  # Si no se encuentra la imagen, pasa a la siguiente
+        except Exception as e:
+            print(f"Error al buscar el zaap en {zaap_image_path}: {e}")
+    return False
+
+
+def search_zaap_in_interface(zaap_name):
+    print(zaap_name, "ZAAP BUSCADO EN LA INTERFAZ")
+    search_input_region = (1300, 220, 1200, 140)  # Ajusta esta región según la posición del campo de búsqueda en la interfaz
+    pg.click(search_input_region[0], search_input_region[1])
+    pyperclip.copy(zaap_name)  # Copia el nombre del Zaap al portapapeles
+    pg.hotkey('ctrl', 'v')  # Pega el nombre del Zaap desde el portapapeles
+    time.sleep(2)  # Espera un momento para que los resultados se actualicen
+
+def get_sorted_zaaps_by_distance(position):
+    """
+    Devuelve una lista de Zaaps ordenados por distancia desde la posición dada.
+    """
+    distances = []
+    for zaap in ZAAPS:
+        distance = calculate_distance(position, zaap)
+        distances.append((zaap, distance))
+    distances.sort(key=lambda x: x[1])
+    return distances
+
+def teleport_to_closest_zaap(current_position, target_position):
+    # Listar Zaaps en orden de cercanía desde la posición actual
+    sorted_zaaps_to_current = get_sorted_zaaps_by_distance(current_position)
+    print("Zaaps ordenados por cercanía desde la posición actual:")
+    for zaap, distance in sorted_zaaps_to_current:
+        zaap_name = get_zaap_name_by_coordinates(zaap)
+        print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
+
+    closest_zaap_to_current = sorted_zaaps_to_current[0][0]  # El más cercano
+
+    # Listar Zaaps en orden de cercanía desde la posición de destino
+    sorted_zaaps_to_target = get_sorted_zaaps_by_distance(target_position)
+    print("Zaaps ordenados por cercanía desde la posición de destino:")
+    for zaap, distance in sorted_zaaps_to_target:
+        zaap_name = get_zaap_name_by_coordinates(zaap)
+        print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
+
+    closest_zaap_to_target = sorted_zaaps_to_target[0][0]  # El más cercano
+
+    if closest_zaap_to_current and closest_zaap_to_target:
+        closest_zaap_name_to_current = get_zaap_name_by_coordinates(closest_zaap_to_current)
+        closest_zaap_name_to_target = get_zaap_name_by_coordinates(closest_zaap_to_target)
+
+        if not closest_zaap_name_to_current or not closest_zaap_name_to_target:
+            print("No se encontró el nombre del Zaap más cercano.")
+            return
+
+        print(f"Zaap más cercano a la posición actual ({current_position}): {closest_zaap_to_current} ({closest_zaap_name_to_current})")
+        print(f"Zaap más cercano a la posición de destino ({target_position}): {closest_zaap_to_target} ({closest_zaap_name_to_target})")
+
+        print(f"Teleporting to closest Zaap from {closest_zaap_to_current} ({closest_zaap_name_to_current}) to {closest_zaap_to_target} ({closest_zaap_name_to_target})")
+
+        move_to_position(closest_zaap_to_current)
+        if detect_and_click_zaap():
+            search_zaap_in_interface(closest_zaap_name_to_target)
+            pg.click(TELEPORT_BUTTON_REGION)
+            time.sleep(WAIT_TIME)
+        else:
+            print("No Zaap detected at current position. Moving normally.")
+    else:
+        print("No close Zaap found for teleportation. Moving normally.")
+
+
+
+
 def change_map(direction):
-    """
-    Cambia el mapa en la dirección especificada.
-    """
     if direction not in TOOLTIP_REGIONS:
         raise ValueError(f"Dirección inválida: {direction}. Las direcciones válidas son: {list(TOOLTIP_REGIONS.keys())}")
     
     pg.click(TOOLTIP_REGIONS[direction])
-    time.sleep(WAIT_TIME) 
+    time.sleep(WAIT_TIME)
 
 def move_to_position(target_position):
-    """
-    Mueve al bot a una posición específica en el mapa.
-    """
     target_x, target_y = map(int, clean_coordinates(target_position).split(','))
     while True:
         current_position = capture_map_coordinates()
@@ -613,17 +748,16 @@ def move_to_position(target_position):
             change_map('up')
 //////////////
 resource_management.py:
-
 import pyautogui as pg
 from modules.combat import check_combat_status
-from modules.navigation import change_map, move_to_position
+from modules.navigation import change_map, move_to_position, teleport_to_closest_zaap
 from modules.image_processing import capture_map_coordinates
 import time
 from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME, RESOURCES_TYPE,DIRECTION_PATH_ESCARAHOJA_ZAAP,DIRECTION_PATH_ROBLE, DIRECTION_PATH_ABSTRUB_ZAAP, ZAAPS, DIRECTION_PATH_TREBOL
 
 
 PREDEFINED_POSITIONS = {
-    "5,-8": DIRECTION_PATH_ABSTRUB_ZAAP,
+    "5,-18": DIRECTION_PATH_ABSTRUB_ZAAP,
     "-1,24": DIRECTION_PATH_ESCARAHOJA_ZAAP,
     "-11,-8": DIRECTION_PATH_ROBLE,
     "3,21": DIRECTION_PATH_TREBOL
@@ -732,39 +866,53 @@ def search_and_collect_resources():
         return False
     return True
 
+
+
+PREDEFINED_POSITIONS = {
+    "5,-18": DIRECTION_PATH_ABSTRUB_ZAAP,
+    "-1,24": DIRECTION_PATH_ESCARAHOJA_ZAAP,
+    "-11,-8": DIRECTION_PATH_ROBLE,
+    "3,21": DIRECTION_PATH_TREBOL
+}
+
+def move_to_predefined_position(initial_position, target_position):
+    initial_position = clean_coordinates(initial_position)
+    target_position = clean_coordinates(target_position)
+    if initial_position != target_position:
+        print(f"Posición inicial no coincide con la posición predefinida. Moviéndose a la posición predefinida {target_position}.")
+        teleport_to_closest_zaap(initial_position, target_position)
+        move_to_position(target_position)
+    else:
+        print(f"Posición inicial coincide con la posición predefinida: {initial_position}. Usando ruta correspondiente.")
+
+
+
 def search_resources():
     initial_position = capture_map_coordinates()
     print(f"Coordenadas iniciales: {initial_position}")
 
-    # Preguntar al usuario cuál es la posición predefinida principal
     main_position = choose_predefined_position()
-
-    # Moverse a la posición predefinida principal si no coincide
     move_to_predefined_position(initial_position, main_position)
     resources_collected = search_and_collect_resources()
     if not resources_collected:
         print("No se encontraron más recursos en la zona.")
-    time.sleep(2) 
+    time.sleep(2)
 
-    # Ejecutar la ruta de la posición predefinida principal
     path = PREDEFINED_POSITIONS[main_position]
     for direction in path:
         change_map(direction)
-        time.sleep(WAIT_TIME)  # Pausa entre cambios de mapa
+        time.sleep(WAIT_TIME)
 
-        # Capturar y mostrar la posición del mapa actual y anterior
         current_position = capture_map_coordinates()
         print(f"Coordenadas después de cambiar de mapa: {current_position}")
 
-        # Buscar recursos en la zona antes de cambiar de mapa
         while True:
             resources_collected = search_and_collect_resources()
             if not resources_collected:
                 print("No se encontraron más recursos en la zona.")
                 break
-            time.sleep(2)  # Pequeña pausa antes de buscar de nuevo
+            time.sleep(2)
 
-    # Solicitar segunda y tercera posición predefinida opcional
     while True:
         second_position_choice = input("¿Desea definir una segunda posición predefinida? (y/n): ")
         if second_position_choice.lower() == 'y':
@@ -774,19 +922,17 @@ def search_resources():
             path = PREDEFINED_POSITIONS[second_position]
             for direction in path:
                 change_map(direction)
-                time.sleep(WAIT_TIME)  # Pausa entre cambios de mapa
+                time.sleep(WAIT_TIME)
 
-                # Capturar y mostrar la posición del mapa actual y anterior
                 current_position = capture_map_coordinates()
                 print(f"Coordenadas después de cambiar de mapa: {current_position}")
 
-                # Buscar recursos en la zona antes de cambiar de mapa
                 while True:
                     resources_collected = search_and_collect_resources()
                     if not resources_collected:
                         print("No se encontraron más recursos en la zona.")
                         break
-                    time.sleep(2)  # Pequeña pausa antes de buscar de nuevo
+                    time.sleep(2)
 
             third_position_choice = input("¿Desea definir una tercera posición predefinida? (y/n): ")
             if third_position_choice.lower() == 'y':
@@ -796,24 +942,23 @@ def search_resources():
                 path = PREDEFINED_POSITIONS[third_position]
                 for direction in path:
                     change_map(direction)
-                    time.sleep(WAIT_TIME)  # Pausa entre cambios de mapa
+                    time.sleep(WAIT_TIME)
 
-                    # Capturar y mostrar la posición del mapa actual y anterior
                     current_position = capture_map_coordinates()
                     print(f"Coordenadas después de cambiar de mapa: {current_position}")
 
-                    # Buscar recursos en la zona antes de cambiar de mapa
                     while True:
                         resources_collected = search_and_collect_resources()
                         if not resources_collected:
                             print("No se encontraron más recursos en la zona.")
                             break
-                        time.sleep(2)  # Pequeña pausa antes de buscar de nuevo
+                        time.sleep(2)
             else:
                 print("No se definió una tercera posición.")
                 break
         else:
             break
+        
 def calculate_distance(pos1, pos2):
     x1, y1 = map(int, clean_coordinates(pos1).split(','))
     x2, y2 = map(int, clean_coordinates(pos2).split(','))
@@ -829,17 +974,7 @@ def get_closest_zaap(current_position, target_position):
             closest_zaap = zaap
     return closest_zaap
 
-def move_to_predefined_position(initial_position, target_position):
-    initial_position = clean_coordinates(initial_position)
-    target_position = clean_coordinates(target_position)
-    if initial_position != target_position:
-        print(f"Posición inicial no coincide con la posición predefinida. Moviéndose a la posición predefinida {target_position}.")
-        closest_zaap = get_closest_zaap(initial_position, target_position)
-        print(f"Moverse al Zaap más cercano: {closest_zaap}")
-        move_to_position(closest_zaap)
-        move_to_position(target_position)
-    else:
-        print(f"Posición inicial coincide con la posición predefinida: {initial_position}. Usando ruta correspondiente.")
+
 
 
 def choose_predefined_position():
@@ -853,6 +988,8 @@ def choose_predefined_position():
     else:
         print("Selección inválida. Por favor, intente de nuevo.")
         return choose_predefined_position()
+    
+    
 /////////////////////
 
 
@@ -875,6 +1012,7 @@ ojolA
 │             ├─ look_up.png
 │             ├─ look_up_left.png
 │             └─ look_up_right.png
+|___Zapps
 │
 └───resources
     │
@@ -930,6 +1068,8 @@ MAP_LOCATION_DIR = "mapLocation"
 SCREENSHOTS_DIR = "ojoIA"
 RESOURCES_DIR = "resources"
 ZAAP_IMAGES_DIR = os.path.join(SCREENSHOTS_DIR, 'zaaps')
+# Nivel de confianza para la detección de imágenes
+CONFIDENCE_LEVEL = 0.7
 
 # Configuraciones de imágenes y navegación
 IMAGE_OFFSET = 25
@@ -939,11 +1079,10 @@ SCREENSHOT_SIZE = 100
 # Rutas de Zaaps
 ZAAPS = [
     "25,-4", "27,-14", "1,-32", "10,22", "13,26", "-31,-56", "-26,37", "-78,-41",
-    "35,12", "-46,18", "-1,13", "-1,24", "7,-4", "5,18", "-27,36", "3,5", "-5,8",
-    "-2,0", "39,-82", "20,29", "-25,12", "-20,20", "-3,42", "-5,23", "-17,47",
+    "35,12", "-46,18", "-1,13", "-1,24", "7,-4", "5,-18", "-27,-36", "3,5", "-5,-8",
+    "-2,0", "39,-82", "20,29", "-25,12", "-20,-20", "-3,-42", "-5,-23", "-17,-47",
     "-34,8", "0,-56", "-13,28", "-16,1"
 ]
-
 # Tipos de recursos y sus categorías
 RESOURCES_TYPE = {
     "trigo": "cereals",
@@ -1081,12 +1220,46 @@ ZAAP_DETECTION_REGION = (0, 0, 1920, 1080)
 ZAAP_INTERFACE_REGION = (600, 200, 700, 600)  # Ajusta según sea necesario
 TELEPORT_BUTTON_REGION = (860, 750, 200, 50)  # Ajusta según sea necesario
 
+ZAAP_LOCATIONS = [
+    {"nombre": "Isla Zanahowia", "coordenadas": "25,-4", "región": "Archipiélago Wabbit"},
+    {"nombre": "Laboratorios abandonados", "coordenadas": "27,-14", "región": "Archipiélago Wabbit"},
+    {"nombre": "Tainela", "coordenadas": "1,-32", "región": "Astrub"},
+    {"nombre": "Ribera del golfo sufokeño", "coordenadas": "10,22", "región": "Bahía de Sufokia"},
+    {"nombre": "Sufokia", "coordenadas": "13,26", "región": "Bahía de Sufokia"},
+    {"nombre": "Corazón Inmaculado", "coordenadas": "-31,-56", "región": "Bonta"},
+    {"nombre": "Coraza", "coordenadas": "-26,37", "región": "Brakmar"},
+    {"nombre": "Burgo", "coordenadas": "-78,-41", "región": "Isla de Frigost"},
+    {"nombre": "Playa Tortuga", "coordenadas": "35,12", "región": "Isla de Moon"},
+    {"nombre": "Pueblo costero", "coordenadas": "-46,18", "región": "Isla de Otomai"},
+    {"nombre": "Linde del Bosque Maléfico", "coordenadas": "-1,13", "región": "Amakna"},
+    {"nombre": "Llanura de los escarahojas", "coordenadas": "-1,24", "región": "Amakna"},
+    {"nombre": "Puerto de Madrestam", "coordenadas": "7,-4", "región": "Amakna"},
+    {"nombre": "Ciudad de Astrub", "coordenadas": "5,-18", "región": "Astrub"},
+    {"nombre": "Campos de Cania", "coordenadas": "-27,-36", "región": "Llanuras de Cania"},
+    {"nombre": "Castillo de Amakna", "coordenadas": "3,5", "región": "Amakna"},
+    {"nombre": "La montaña de los crujidores", "coordenadas": "-5,-8", "región": "Amakna"},
+    {"nombre": "Pueblo de Amakna", "coordenadas": "-2,0", "región": "Amakna"},
+    {"nombre": "Arboleda nevada", "coordenadas": "39,-82", "región": "Archipiélago de Valonia"},
+    {"nombre": "Pueblo de Pandala", "coordenadas": "20,29", "región": "Isla de Pandala"},
+    {"nombre": "Camino de las caravanas", "coordenadas": "-25,12", "región": "Landas de Sidimote"},
+    {"nombre": "Caminos rocosos", "coordenadas": "-20,-20", "región": "Llanuras de Cania"},
+    {"nombre": "Lago de Cania", "coordenadas": "-3,-42", "región": "Llanuras de Cania"},
+    {"nombre": "Llanura de los puerkazos", "coordenadas": "-5,-23", "región": "Llanuras de Cania"},
+    {"nombre": "Llanuras Rocosas", "coordenadas": "-17,-47", "región": "Llanuras de Cania"},
+    {"nombre": "Pueblo de los dopeuls", "coordenadas": "-34,8", "región": "Llanuras de Cania"},
+    {"nombre": "Pueblo de los kanigs", "coordenadas": "0,-56", "región": "Llanuras de Cania"},
+    {"nombre": "Sierra de Cania", "coordenadas": "-13,28", "región": "Llanuras de Cania"},
+    {"nombre": "Pueblo de los ganaderos", "coordenadas": "-16,1", "región": "Montaña de los Koalaks"}
+]
+
 
 
 /////////////////
 Y el centro de todo
 
 main.py :
+# main.py
+
 from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
@@ -1150,11 +1323,9 @@ def main():
         user_choice = main_menu()
 
         if user_choice == '1':
-            while True:
-                search_resources()
+            search_resources()
         elif user_choice == '2':
-            while True:
-                searchMob()
+            searchMob()
         elif user_choice == '3':
             print("Esta funcionalidad aún está en desarrollo.")
         elif user_choice == '4':
