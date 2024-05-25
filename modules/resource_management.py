@@ -1,6 +1,6 @@
 import pyautogui as pg
 from modules.combat import check_combat_status
-from modules.navigation import change_map, move_to_position
+from modules.navigation import change_map, move_to_position, teleport_to_closest_zaap
 from modules.image_processing import capture_map_coordinates
 import time
 from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME, RESOURCES_TYPE,DIRECTION_PATH_ESCARAHOJA_ZAAP,DIRECTION_PATH_ROBLE, DIRECTION_PATH_ABSTRUB_ZAAP, ZAAPS, DIRECTION_PATH_TREBOL
@@ -116,39 +116,53 @@ def search_and_collect_resources():
         return False
     return True
 
+
+
+PREDEFINED_POSITIONS = {
+    "5,-8": DIRECTION_PATH_ABSTRUB_ZAAP,
+    "-1,24": DIRECTION_PATH_ESCARAHOJA_ZAAP,
+    "-11,-8": DIRECTION_PATH_ROBLE,
+    "3,21": DIRECTION_PATH_TREBOL
+}
+
+def move_to_predefined_position(initial_position, target_position):
+    initial_position = clean_coordinates(initial_position)
+    target_position = clean_coordinates(target_position)
+    if initial_position != target_position:
+        print(f"Posición inicial no coincide con la posición predefinida. Moviéndose a la posición predefinida {target_position}.")
+        teleport_to_closest_zaap(initial_position, target_position)
+        move_to_position(target_position)
+    else:
+        print(f"Posición inicial coincide con la posición predefinida: {initial_position}. Usando ruta correspondiente.")
+
+
+
 def search_resources():
     initial_position = capture_map_coordinates()
     print(f"Coordenadas iniciales: {initial_position}")
 
-    # Preguntar al usuario cuál es la posición predefinida principal
     main_position = choose_predefined_position()
-
-    # Moverse a la posición predefinida principal si no coincide
     move_to_predefined_position(initial_position, main_position)
     resources_collected = search_and_collect_resources()
     if not resources_collected:
         print("No se encontraron más recursos en la zona.")
-    time.sleep(2) 
+    time.sleep(2)
 
-    # Ejecutar la ruta de la posición predefinida principal
     path = PREDEFINED_POSITIONS[main_position]
     for direction in path:
         change_map(direction)
-        time.sleep(WAIT_TIME)  # Pausa entre cambios de mapa
+        time.sleep(WAIT_TIME)
 
-        # Capturar y mostrar la posición del mapa actual y anterior
         current_position = capture_map_coordinates()
         print(f"Coordenadas después de cambiar de mapa: {current_position}")
 
-        # Buscar recursos en la zona antes de cambiar de mapa
         while True:
             resources_collected = search_and_collect_resources()
             if not resources_collected:
                 print("No se encontraron más recursos en la zona.")
                 break
-            time.sleep(2)  # Pequeña pausa antes de buscar de nuevo
+            time.sleep(2)
 
-    # Solicitar segunda y tercera posición predefinida opcional
     while True:
         second_position_choice = input("¿Desea definir una segunda posición predefinida? (y/n): ")
         if second_position_choice.lower() == 'y':
@@ -158,19 +172,17 @@ def search_resources():
             path = PREDEFINED_POSITIONS[second_position]
             for direction in path:
                 change_map(direction)
-                time.sleep(WAIT_TIME)  # Pausa entre cambios de mapa
+                time.sleep(WAIT_TIME)
 
-                # Capturar y mostrar la posición del mapa actual y anterior
                 current_position = capture_map_coordinates()
                 print(f"Coordenadas después de cambiar de mapa: {current_position}")
 
-                # Buscar recursos en la zona antes de cambiar de mapa
                 while True:
                     resources_collected = search_and_collect_resources()
                     if not resources_collected:
                         print("No se encontraron más recursos en la zona.")
                         break
-                    time.sleep(2)  # Pequeña pausa antes de buscar de nuevo
+                    time.sleep(2)
 
             third_position_choice = input("¿Desea definir una tercera posición predefinida? (y/n): ")
             if third_position_choice.lower() == 'y':
@@ -180,24 +192,23 @@ def search_resources():
                 path = PREDEFINED_POSITIONS[third_position]
                 for direction in path:
                     change_map(direction)
-                    time.sleep(WAIT_TIME)  # Pausa entre cambios de mapa
+                    time.sleep(WAIT_TIME)
 
-                    # Capturar y mostrar la posición del mapa actual y anterior
                     current_position = capture_map_coordinates()
                     print(f"Coordenadas después de cambiar de mapa: {current_position}")
 
-                    # Buscar recursos en la zona antes de cambiar de mapa
                     while True:
                         resources_collected = search_and_collect_resources()
                         if not resources_collected:
                             print("No se encontraron más recursos en la zona.")
                             break
-                        time.sleep(2)  # Pequeña pausa antes de buscar de nuevo
+                        time.sleep(2)
             else:
                 print("No se definió una tercera posición.")
                 break
         else:
             break
+        
 def calculate_distance(pos1, pos2):
     x1, y1 = map(int, clean_coordinates(pos1).split(','))
     x2, y2 = map(int, clean_coordinates(pos2).split(','))
@@ -213,17 +224,7 @@ def get_closest_zaap(current_position, target_position):
             closest_zaap = zaap
     return closest_zaap
 
-def move_to_predefined_position(initial_position, target_position):
-    initial_position = clean_coordinates(initial_position)
-    target_position = clean_coordinates(target_position)
-    if initial_position != target_position:
-        print(f"Posición inicial no coincide con la posición predefinida. Moviéndose a la posición predefinida {target_position}.")
-        closest_zaap = get_closest_zaap(initial_position, target_position)
-        print(f"Moverse al Zaap más cercano: {closest_zaap}")
-        move_to_position(closest_zaap)
-        move_to_position(target_position)
-    else:
-        print(f"Posición inicial coincide con la posición predefinida: {initial_position}. Usando ruta correspondiente.")
+
 
 
 def choose_predefined_position():
@@ -237,3 +238,5 @@ def choose_predefined_position():
     else:
         print("Selección inválida. Por favor, intente de nuevo.")
         return choose_predefined_position()
+    
+    

@@ -1,9 +1,10 @@
+import time
 import pytesseract
 import os
 import numpy as np
 import cv2
 import pyautogui as pg
-from config import SCREENSHOTS_DIR, TESSERACT_CMD_PATH, MAP_LOCATION_DIR
+from config import SCREENSHOTS_DIR, TESSERACT_CMD_PATH, MAP_LOCATION_DIR, CONFIDENCE_LEVEL, ZAAP_IMAGES_DIR,WAIT_TIME
 from PIL import Image, ImageChops, UnidentifiedImageError
 
 
@@ -145,3 +146,21 @@ def capture_combat_map_frame():
     frame = pg.screenshot(region=combat_map_region)
     frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
     return frame
+
+def find_zaap_and_click():
+    """
+    Busca un zaap en la pantalla y hace clic en él si se encuentra.
+    """
+    for zaap_image in os.listdir(ZAAP_IMAGES_DIR):
+        zaap_path = os.path.join(ZAAP_IMAGES_DIR, zaap_image)
+        try:
+            location = pg.locateCenterOnScreen(zaap_path, confidence=CONFIDENCE_LEVEL)
+            if location:
+                pg.click(location)
+                time.sleep(WAIT_TIME)
+                return True
+        except pg.ImageNotFoundException:
+            continue  # Si no se encuentra la imagen, pasa a la siguiente
+        except Exception as e:
+            print(f"Error al buscar el zaap en {zaap_path}: {e}")
+    return False

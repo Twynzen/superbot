@@ -12,6 +12,8 @@ MAP_LOCATION_DIR = "mapLocation"
 SCREENSHOTS_DIR = "ojoIA"
 RESOURCES_DIR = "resources"
 ZAAP_IMAGES_DIR = os.path.join(SCREENSHOTS_DIR, 'zaaps')
+# Nivel de confianza para la detección de imágenes
+CONFIDENCE_LEVEL = 0.7
 
 # Configuraciones de imágenes y navegación
 IMAGE_OFFSET = 25
@@ -21,11 +23,10 @@ SCREENSHOT_SIZE = 100
 # Rutas de Zaaps
 ZAAPS = [
     "25,-4", "27,-14", "1,-32", "10,22", "13,26", "-31,-56", "-26,37", "-78,-41",
-    "35,12", "-46,18", "-1,13", "-1,24", "7,-4", "5,18", "-27,36", "3,5", "-5,8",
-    "-2,0", "39,-82", "20,29", "-25,12", "-20,20", "-3,42", "-5,23", "-17,47",
+    "35,12", "-46,18", "-1,13", "-1,24", "7,-4", "5,-18", "-27,-36", "3,5", "-5,-8",
+    "-2,0", "39,-82", "20,29", "-25,12", "-20,-20", "-3,-42", "-5,-23", "-17,-47",
     "-34,8", "0,-56", "-13,28", "-16,1"
 ]
-
 # Tipos de recursos y sus categorías
 RESOURCES_TYPE = {
     "trigo": "cereals",
@@ -162,3 +163,35 @@ ZAAP_DETECTION_REGION = (0, 0, 1920, 1080)
 # Región de la interfaz de zaaps y botón de teletransportarse
 ZAAP_INTERFACE_REGION = (600, 200, 700, 600)  # Ajusta según sea necesario
 TELEPORT_BUTTON_REGION = (860, 750, 200, 50)  # Ajusta según sea necesario
+
+ZAAP_LOCATIONS = [
+    {"nombre": "Isla Zanahowia", "coordenadas": "25,-4", "región": "Archipiélago Wabbit"},
+    {"nombre": "Laboratorios abandonados", "coordenadas": "27,-14", "región": "Archipiélago Wabbit"},
+    {"nombre": "Tainela", "coordenadas": "1,-32", "región": "Astrub"},
+    {"nombre": "Ribera del golfo sufokeño", "coordenadas": "10,22", "región": "Bahía de Sufokia"},
+    {"nombre": "Sufokia", "coordenadas": "13,26", "región": "Bahía de Sufokia"},
+    {"nombre": "Corazón Inmaculado", "coordenadas": "-31,-56", "región": "Bonta"},
+    {"nombre": "Coraza", "coordenadas": "-26,37", "región": "Brakmar"},
+    {"nombre": "Burgo", "coordenadas": "-78,-41", "región": "Isla de Frigost"},
+    {"nombre": "Playa Tortuga", "coordenadas": "35,12", "región": "Isla de Moon"},
+    {"nombre": "Pueblo costero", "coordenadas": "-46,18", "región": "Isla de Otomai"},
+    {"nombre": "Linde del Bosque Maléfico", "coordenadas": "-1,13", "región": "Amakna"},
+    {"nombre": "Llanura de los escarahojas", "coordenadas": "-1,24", "región": "Amakna"},
+    {"nombre": "Puerto de Madrestam", "coordenadas": "7,-4", "región": "Amakna"},
+    {"nombre": "Ciudad de Astrub", "coordenadas": "5,-18", "región": "Astrub"},
+    {"nombre": "Campos de Cania", "coordenadas": "-27,-36", "región": "Llanuras de Cania"},
+    {"nombre": "Castillo de Amakna", "coordenadas": "3,5", "región": "Amakna"},
+    {"nombre": "La montaña de los crujidores", "coordenadas": "-5,-8", "región": "Amakna"},
+    {"nombre": "Pueblo de Amakna", "coordenadas": "-2,0", "región": "Amakna"},
+    {"nombre": "Arboleda nevada", "coordenadas": "39,-82", "región": "Archipiélago de Valonia"},
+    {"nombre": "Pueblo de Pandala", "coordenadas": "20,29", "región": "Isla de Pandala"},
+    {"nombre": "Camino de las caravanas", "coordenadas": "-25,12", "región": "Landas de Sidimote"},
+    {"nombre": "Caminos rocosos", "coordenadas": "-20,-20", "región": "Llanuras de Cania"},
+    {"nombre": "Lago de Cania", "coordenadas": "-3,-42", "región": "Llanuras de Cania"},
+    {"nombre": "Llanura de los puerkazos", "coordenadas": "-5,-23", "región": "Llanuras de Cania"},
+    {"nombre": "Llanuras Rocosas", "coordenadas": "-17,-47", "región": "Llanuras de Cania"},
+    {"nombre": "Pueblo de los dopeuls", "coordenadas": "-34,8", "región": "Llanuras de Cania"},
+    {"nombre": "Pueblo de los kanigs", "coordenadas": "0,-56", "región": "Llanuras de Cania"},
+    {"nombre": "Sierra de Cania", "coordenadas": "-13,28", "región": "Llanuras de Cania"},
+    {"nombre": "Pueblo de los ganaderos", "coordenadas": "-16,1", "región": "Montaña de los Koalaks"}
+]
