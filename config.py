@@ -17,13 +17,13 @@ CONFIDENCE_LEVEL = 0.7
 
 # Configuraciones de imágenes y navegación
 IMAGE_OFFSET = 25
-WAIT_TIME = 6
+WAIT_TIME = 3
 SCREENSHOT_SIZE = 100
 
 # Rutas de Zaaps
 ZAAPS = [
     "25,-4", "27,-14", "1,-32", "10,22", "13,26", "-31,-56", "-26,37", "-78,-41",
-    "35,12", "-46,18", "-1,13", "-1,24", "7,-4", "5,-18", "-27,-36", "3,5", "-5,-8",
+    "35,12", "-46,18", "-1,13", "-1,24", "7,-4", "5,-18", "-27,-36", "3,-5", "-5,-8",
     "-2,0", "39,-82", "20,29", "-25,12", "-20,-20", "-3,-42", "-5,-23", "-17,-47",
     "-34,8", "0,-56", "-13,28", "-16,1"
 ]
@@ -180,7 +180,7 @@ ZAAP_LOCATIONS = [
     {"nombre": "Puerto de Madrestam", "coordenadas": "7,-4", "región": "Amakna"},
     {"nombre": "Ciudad de Astrub", "coordenadas": "5,-18", "región": "Astrub"},
     {"nombre": "Campos de Cania", "coordenadas": "-27,-36", "región": "Llanuras de Cania"},
-    {"nombre": "Castillo de Amakna", "coordenadas": "3,5", "región": "Amakna"},
+    {"nombre": "Castillo de Amakna", "coordenadas": "3,-5", "región": "Amakna"},
     {"nombre": "La montaña de los crujidores", "coordenadas": "-5,-8", "región": "Amakna"},
     {"nombre": "Pueblo de Amakna", "coordenadas": "-2,0", "región": "Amakna"},
     {"nombre": "Arboleda nevada", "coordenadas": "39,-82", "región": "Archipiélago de Valonia"},

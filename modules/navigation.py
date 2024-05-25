@@ -11,6 +11,12 @@ from modules.image_processing import capture_map_coordinates
 
 TESSERACT_CMD_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD_PATH
+from collections import defaultdict
+
+# Estructura para registrar intentos fallidos
+failed_moves_registry = defaultdict(set)
+previous_position = None
+
 
 def clean_coordinates(coord):
     coord = coord.strip().split(',')
@@ -23,10 +29,6 @@ def calculate_distance(pos1, pos2):
     x2, y2 = map(int, clean_coordinates(pos2).split(','))
     return abs(x1 - x2) + abs(y1 - y2)
 
-
-#CUADRAR CLICK EN BUSCAR DESTINO
-#VALIDAR BUSQUEDA DE OTROS ZAAPS NO SOLO DEL -1,13
-#TELETRANSPORTAR CON EXTIO
 
 def get_closest_zaap(position):
     min_distance = float('inf')
@@ -101,6 +103,12 @@ def teleport_to_closest_zaap(current_position, target_position):
 
     closest_zaap_to_target = sorted_zaaps_to_target[0][0]  # El más cercano
 
+    # Verificar si el zaap más cercano desde la posición actual es el mismo que nos acercaría a la posición de destino
+    if closest_zaap_to_current == closest_zaap_to_target:
+        print("El zaap más cercano desde la posición actual es el mismo que nos acercaría a la posición de destino. Evitando teleportarse.")
+        move_to_position(target_position)
+        return
+
     if closest_zaap_to_current and closest_zaap_to_target:
         closest_zaap_name_to_current = get_zaap_name_by_coordinates(closest_zaap_to_current)
         closest_zaap_name_to_target = get_zaap_name_by_coordinates(closest_zaap_to_target)
@@ -127,15 +135,47 @@ def teleport_to_closest_zaap(current_position, target_position):
 
 
 
+
 def change_map(direction):
     if direction not in TOOLTIP_REGIONS:
         raise ValueError(f"Dirección inválida: {direction}. Las direcciones válidas son: {list(TOOLTIP_REGIONS.keys())}")
     
     pg.click(TOOLTIP_REGIONS[direction])
     time.sleep(WAIT_TIME)
+    
+def try_alternate_directions(current_x, current_y, target_x, target_y):
+    primary_direction = None
+    secondary_direction = None
+
+    # Determinar la dirección primaria y secundaria basada en la dirección fallida
+    if current_x != target_x:
+        # Si hay diferencia en x (fallo izquierda/derecha), intentar mover hacia arriba
+        primary_direction = 'up'
+    elif current_y != target_y:
+        # Si hay diferencia en y (fallo arriba/abajo), intentar mover hacia la derecha
+        primary_direction = 'right'
+
+    for direction in [primary_direction]:
+        if (current_x, current_y, direction) not in failed_moves_registry[(current_x, current_y)]:
+            print(f"Intentando ruta alternativa de ({current_x}, {current_y}) a ({current_x + (direction == 'right') - (direction == 'left')}, {current_y + (direction == 'down') - (direction == 'up')}) dirección {direction}")
+            change_map(direction)
+            time.sleep(WAIT_TIME)
+            new_position = capture_map_coordinates()
+            new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+            if (new_x, new_y) != previous_position:  # Evitar retrocesos
+                if new_position != "Capture Failed" and new_position != "Error":
+                    if new_x != current_x or new_y != current_y:
+                        return new_position
+
+    return f"{current_x},{current_y}"  # Retorna la misma posición si no se logró mover
+
 
 def move_to_position(target_position):
+    global previous_position
     target_x, target_y = map(int, clean_coordinates(target_position).split(','))
+    failed_attempts = 0
+    previous_position = None  # Inicializar la posición anterior
+
     while True:
         current_position = capture_map_coordinates()
         if current_position == "Capture Failed" or current_position == "Error":
@@ -143,18 +183,82 @@ def move_to_position(target_position):
             continue
 
         current_x, current_y = map(int, clean_coordinates(current_position).split(','))
-        print(f"Moviéndose de {current_position} a {target_position}")
+        
+        # Comprobar excepciones de ruta
+        new_x, new_y, exception_applied = check_route_exceptions(f"{current_x},{current_y}", target_position)
+        if exception_applied:
+            previous_position = (current_x, current_y)
+            current_x, current_y = new_x, new_y
+            print(f"Posición actualizada a ({current_x}, {current_y}) por excepción de ruta.")
+            continue
 
         if current_x == target_x and current_y == target_y:
             print(f"Posición objetivo {target_position} alcanzada.")
             break
 
-        if current_x < target_x:
-            change_map('right')
-        elif current_x > target_x:
-            change_map('left')
+        move_direction = None
+        is_backtracking = False
 
-        if current_y < target_y:
-            change_map('down')
-        elif current_y > target_y:
-            change_map('up')
+        if current_x < target_x and (current_x, current_y, 'right') not in failed_moves_registry[(current_x, current_y)]:
+            move_direction = 'right'
+        elif current_x > target_x and (current_x, current_y, 'left') not in failed_moves_registry[(current_x, current_y)]:
+            move_direction = 'left'
+        elif current_y < target_y and (current_x, current_y, 'down') not in failed_moves_registry[(current_x, current_y)]:
+            move_direction = 'down'
+        elif current_y > target_y and (current_x, current_y, 'up') not in failed_moves_registry[(current_x, current_y)]:
+            move_direction = 'up'
+
+        if move_direction:
+            print(f"Intentando mover de ({current_x}, {current_y}) a ({current_x + (move_direction == 'right') - (move_direction == 'left')}, {current_y + (move_direction == 'down') - (move_direction == 'up')}) dirección {move_direction}")
+            change_map(move_direction)
+            time.sleep(WAIT_TIME)
+            new_position = capture_map_coordinates()
+            new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+            if previous_position and (new_x, new_y) == previous_position:
+                print(f"Retroceso detectado de {new_position} a {current_position}. Intentando rutas alternativas...")
+                is_backtracking = True
+        else:
+            print("Todos los movimientos en esta dirección han fallado previamente. Intentando rutas alternativas...")
+            new_position = try_alternate_directions(current_x, current_y, target_x, target_y)
+
+        new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+
+        if new_x == current_x and new_y == current_y:
+            failed_attempts += 1
+            if move_direction:
+                print(f"Movimiento fallido registrado: ({current_x}, {current_y}) dirección {move_direction}")
+                failed_moves_registry[(current_x, current_y)].add((current_x, current_y, move_direction))
+            if failed_attempts >= 2:
+                print("Intentos fallidos repetidos. Intentando rutas alternativas...")
+                new_position = try_alternate_directions(current_x, current_y, target_x, target_y)
+                new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+                if new_x == current_x and new_y == current_y:
+                    print("No se pudo mover después de intentar rutas alternativas. Reintentando...")
+                    failed_attempts = 0  # Resetear los intentos fallidos pa
+
+def check_route_exceptions(current_position, target_position):
+    if current_position == '-6,-9' and target_position == '-11,-8':
+        print("Excepción de ruta detectada: de -6,-9 a -11,-8, moviéndose hacia arriba.")
+        change_map('up')
+        time.sleep(WAIT_TIME)
+        new_position = capture_map_coordinates()
+        new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+        return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción
+
+    if current_position == '-6,-10' and target_position == '-5,-8':
+        print("Excepción de ruta detectada: de -6,-10 a -5,-8, moviéndose hacia abajo.")
+        change_map('down')
+        time.sleep(WAIT_TIME)
+        new_position = capture_map_coordinates()
+        new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+        return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción
+    
+    if current_position == '-8,-10' and target_position == '-11,-8':
+        print("Excepción de ruta detectada: de -8,-10 a -11,-8, moviéndose hacia abajo.")
+        change_map('down')
+        time.sleep(WAIT_TIME)
+        new_position = capture_map_coordinates()
+        new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+        return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción
+
+    return None, None, False
