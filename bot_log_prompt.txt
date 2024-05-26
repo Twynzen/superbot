@@ -90,36 +90,41 @@ import time
 import cv2
 import pytesseract
 import numpy as np
-from modules.navigation import change_map
+from modules.navigation import change_map, clean_coordinates
 from modules.image_processing import capture_screenshot, image_difference, capture_and_process_image
-from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION
-from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges
+from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION, MOVEMENTS_TO_PHOENIX_SKELETON
+from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges, detect_and_click_exit_combat
 import torch
 from ultralytics import YOLO
 import mss
 import random
+import config_shared 
 
 class_colors = {}
+#termina de ajustar ruta a fenix
 
 
-def check_combat_status():
+def check_combat_status(auto_surrender=False):
     """Revisa si el bot está en combate, basado en la presencia de la barra de estado."""
     while True:
         status_bar_image_path = capture_status_bar()
-        
-        # Aquí podrías realizar un procesamiento de imagen adicional si es necesario
-        # Por ejemplo, aplicar filtros, detección de bordes, etc.
 
         if is_status_bar_detected(status_bar_image_path):
             print("Combat is still active...")
-            hover_and_detect_player_name(PLAYER_NAME)
-            
-            # Aquí podrías agregar lógica adicional basada en la información de la barra de estado
         else:
             print("Combat status check indicates combat has ended.")
             break
 
-        time.sleep(3) 
+        if auto_surrender:
+            try:
+                if detect_and_click_exit_combat():
+                    print("Se rindió automáticamente en combate.")
+                    break
+            except Exception as e:
+                screenshot_path = capture_screenshot(region=None, filename="exit_combat_error.png", directory="ojoIA/errors")
+                print(f"Error al intentar detectar y clickear el botón de rendirse: {e}. Captura guardada en {screenshot_path}")
+
+        time.sleep(3)
         
 def is_status_bar_detected(image_path):
     image = cv2.imread(image_path)
@@ -367,6 +372,70 @@ def detect_objects_in_real_time():
 
         # Pausa de 3 segundos
         time.sleep(3)
+        
+def is_in_combat():
+    """Revisa si el bot está en combate detectando una imagen específica que solo aparece en combate."""
+    try:
+        combat_indicator_location = pg.locateCenterOnScreen('ojoIA/combat_indicator.png', confidence=0.8)
+        return combat_indicator_location is not None
+    except Exception as e:
+        print(f"Error al intentar detectar si estamos en combate: {e}")
+    return False
+
+def revive_if_dead():
+    if config_shared.is_dead:
+        time.sleep(WAIT_TIME)
+        current_position = clean_coordinates(capture_map_coordinates()) 
+        print(current_position,"POSICION DE INICIO DE FENIX")
+        if current_position == "9,16":
+            print("Iniciando secuencia para revivir en el Fénix desde la posición 9,16...")
+            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+                change_map(move)
+                time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
+
+            phoenix_button_x = 620  # Ajustar según sea necesario
+            phoenix_button_y = 250  # Ajustar según sea necesario
+
+            pg.click(phoenix_button_x, phoenix_button_y)
+            print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
+        else:
+            print("Posición actual no es 9,16, reanudando recolección de recursos...")
+        config_shared.is_dead = False  # Restablecer bandera de muerto a False
+        print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
+    else:
+        print("Personaje no está muerto, reanudando recolección de recursos...")
+        
+def handle_revival():
+    """Maneja el flujo de revivir al Fénix desde cualquier ubicación."""
+    if config_shared.is_dead:
+        time.sleep(WAIT_TIME)
+        current_position = clean_coordinates(capture_map_coordinates())
+        print(f"Posición actual: {current_position}")
+        if current_position == "9,16":
+            print("Ya en la posición del Fénix. Iniciando proceso de revivir...")
+            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+                change_map(move)
+                time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
+
+            phoenix_button_x = 620  # Ajustar según sea necesario
+            phoenix_button_y = 250  # Ajustar según sea necesario
+
+            pg.click(phoenix_button_x, phoenix_button_y)
+            print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
+            config_shared.is_dead = False  # Restablecer bandera de muerto a False
+            print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
+        else:
+            print("Moviéndose al Fénix desde la posición actual...")
+            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+                change_map(move)
+                time.sleep(WAIT_TIME)
+                current_position = clean_coordinates(capture_map_coordinates())
+                print(f"Posición actualizada: {current_position}")
+                if current_position == "9,16":
+                    break
+            handle_revival()  # Llamada recursiva para manejar el proceso de revivir desde "9,16"
+    else:
+        print("Personaje no está muerto. No se necesita revivir.")
 
 //////////////
 characters_tracking.py:
@@ -429,6 +498,7 @@ import cv2
 import pyautogui as pg
 from config import SCREENSHOTS_DIR, TESSERACT_CMD_PATH, MAP_LOCATION_DIR, CONFIDENCE_LEVEL, ZAAP_IMAGES_DIR,WAIT_TIME
 from PIL import Image, ImageChops, UnidentifiedImageError
+import config_shared 
 
 
 
@@ -436,7 +506,10 @@ from PIL import Image, ImageChops, UnidentifiedImageError
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD_PATH
 
 
-def capture_screenshot(region, filename, directory=SCREENSHOTS_DIR):
+
+
+
+def capture_screenshot(region=None, filename="screenshot.png", directory=SCREENSHOTS_DIR):
     """Toma una captura de pantalla de la región especificada y guarda la imagen en el directorio dado."""
     try:
         # Crea el directorio si no existe
@@ -588,6 +661,75 @@ def find_zaap_and_click():
             print(f"Error al buscar el zaap en {zaap_path}: {e}")
     return False
 
+def pause_and_validate_mouse_position():
+    """Pausa la ejecución y muestra la posición actual del mouse para validación."""
+    mouse_x, mouse_y = pg.position()
+    print(f"Mouse position: ({mouse_x}, {mouse_y})")
+    input("Press Enter to continue...")
+
+def detect_and_click_exit_combat():
+    try:
+        exit_button_x = 1440  # Ajustar según sea necesario
+        exit_button_y = 1010  # Ajustar según sea necesario
+
+        pg.click(exit_button_x, exit_button_y)
+        print(f"Click en botón de rendirse en las coordenadas ({exit_button_x}, {exit_button_y}).")
+        pause_and_validate_mouse_position()
+
+        time.sleep(1)  # Espera un momento para que aparezca el cuadro de confirmación
+
+        confirm_button_x = 940  # Ajustar según sea necesario
+        confirm_button_y = 580  # Ajustar según sea necesario
+
+        pg.click(confirm_button_x, confirm_button_y)
+        print(f"Click en botón 'Ok' en las coordenadas ({confirm_button_x}, {confirm_button_y}).")
+        pause_and_validate_mouse_position()
+
+        time.sleep(1)
+
+        # Verificar si aparece el cuadro de diálogo de muerte en toda la pantalla
+        death_dialog_location = pg.locateCenterOnScreen('ojoIA/death_dialog.png', confidence=0.3)
+        if death_dialog_location:
+            revive_button_x = 940 # Ajustar según sea necesario
+            revive_button_y = 615  # Ajustar según sea necesario
+
+            pg.click(revive_button_x, revive_button_y)
+            print(f"Click en botón 'Sí' en las coordenadas ({revive_button_x}, {revive_button_y}).")
+            config_shared.is_dead = True
+            print("Personaje está muerto. Actualizando config_shared.is_dead a True.")
+        else:
+            print("No se detectó el cuadro de diálogo de muerte, siguiendo flujo de derrota normal.")
+        
+        
+        time.sleep(1)
+
+        close_button_x = 950  # Ajustar según sea necesario
+        close_button_y = 630  # Ajustar según sea necesario
+
+        pg.click(close_button_x, close_button_y)
+        pause_and_validate_mouse_position()
+        
+        print(f"Click en botón 'Cerrar' en las coordenadas ({close_button_x}, {close_button_y}).")
+        time.sleep(3)
+        
+        return True
+
+    except Exception as e:
+        screenshot_path = capture_screenshot(region=None, filename="exit_combat_detection_error.png", directory="ojoIA/errors")
+        print(f"Error al intentar clickear el botón de rendirse: {e}. Captura guardada en {screenshot_path}")
+    return False
+
+def ocr_read_text(image_path, lang='eng'):
+    """Utiliza OCR para leer el texto de una imagen."""
+    try:
+        image = cv2.imread(image_path)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        text = pytesseract.image_to_string(gray, lang=lang)  # Especificar el idioma si es necesario
+        return text
+    except Exception as e:
+        print(f"Error al leer texto de la imagen con OCR: {e}")
+        return ""
+
 //////////////
 
 navigation.py:
@@ -677,15 +819,33 @@ def get_sorted_zaaps_by_distance(position):
     distances.sort(key=lambda x: x[1])
     return distances
 
+
+
+def check_zaap_route_exceptions(current_position, target_zaap):
+    if current_position == '12,12' and target_zaap == '10,22':
+        print("Excepción de Zaap detectada: Ignorando Zaap 10,22 desde la posición 12,12.")
+        return True  # Indica que esta excepción aplica y debe ser ignorada
+    return False
+
 def teleport_to_closest_zaap(current_position, target_position):
     # Listar Zaaps en orden de cercanía desde la posición actual
     sorted_zaaps_to_current = get_sorted_zaaps_by_distance(current_position)
     print("Zaaps ordenados por cercanía desde la posición actual:")
     for zaap, distance in sorted_zaaps_to_current:
         zaap_name = get_zaap_name_by_coordinates(zaap)
-        print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
+        # print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
 
-    closest_zaap_to_current = sorted_zaaps_to_current[0][0]  # El más cercano
+    # Verificar excepciones de ruta de Zaap y filtrar Zaap 10,22 si estamos en 12,12
+    if current_position == '12,12':
+        sorted_zaaps_to_current = [zaap for zaap in sorted_zaaps_to_current if clean_coordinates(zaap[0]) != '10,22']
+        print("Excepción de Zaap detectada: Ignorando Zaap 10,22 desde la posición 12,12.")
+
+    if not sorted_zaaps_to_current:
+        print("No se encontraron Zaaps adecuados después de aplicar las excepciones. Moviéndose normalmente.")
+        move_to_position(target_position)
+        return
+
+    closest_zaap_to_current = sorted_zaaps_to_current[0][0]  # El más cercano filtrado
 
     # Listar Zaaps en orden de cercanía desde la posición de destino
     sorted_zaaps_to_target = get_sorted_zaaps_by_distance(target_position)
@@ -724,11 +884,7 @@ def teleport_to_closest_zaap(current_position, target_position):
             print("No Zaap detected at current position. Moving normally.")
     else:
         print("No close Zaap found for teleportation. Moving normally.")
-
-
-
-
-
+        
 def change_map(direction):
     if direction not in TOOLTIP_REGIONS:
         raise ValueError(f"Dirección inválida: {direction}. Las direcciones válidas son: {list(TOOLTIP_REGIONS.keys())}")
@@ -853,13 +1009,24 @@ def check_route_exceptions(current_position, target_position):
         new_position = capture_map_coordinates()
         new_x, new_y = map(int, clean_coordinates(new_position).split(','))
         return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción
-
+    
+    if current_position == '-7,-9' and target_position == '-5,-8':
+        print("Excepción de ruta detectada: de -7,-9 a -5,-8, moviéndose hacia arriba.")
+        change_map('up')
+        time.sleep(WAIT_TIME)
+        new_position = capture_map_coordinates()
+        new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+        return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción  
+    
     return None, None, False
+
+# navigation.py
+
 
 //////////////
 resource_management.py:
 import pyautogui as pg
-from modules.combat import check_combat_status
+from modules.combat import check_combat_status, is_in_combat, revive_if_dead
 from modules.navigation import change_map, move_to_position, teleport_to_closest_zaap
 from modules.image_processing import capture_map_coordinates
 import time
@@ -963,7 +1130,7 @@ def collect_resource(resource_type):
             print(f"Recurso {resource_type} ignorado debido a una excepción.")
     return False
 
-def search_and_collect_resources():
+def search_and_collect_resources(auto_surrender=False):
     """Bucle principal para buscar y recolectar recursos repetidamente hasta que no encuentre más."""
     resources_found = False
     for resource_type in RESOURCES_TYPE:  # Solo iterar sobre los tipos definidos con categoría
@@ -974,8 +1141,14 @@ def search_and_collect_resources():
     if not resources_found:
         print("No se encontraron más recursos. Intentando cambiar de mapa...")
         return False
-    return True
 
+    if auto_surrender and is_in_combat():
+        print("Detectado en combate, iniciando secuencia de rendición...")
+        check_combat_status(auto_surrender)
+        revive_if_dead()  # Revisar si el personaje está muerto y revivir si es necesario
+        search_resources(True)
+    
+    return True
 
 
 PREDEFINED_POSITIONS = {
@@ -997,13 +1170,13 @@ def move_to_predefined_position(initial_position, target_position):
 
 
 
-def search_resources():
+def search_resources(auto_surrender=False):
     initial_position = capture_map_coordinates()
     print(f"Coordenadas iniciales: {initial_position}")
 
     main_position = choose_predefined_position()
     move_to_predefined_position(initial_position, main_position)
-    resources_collected = search_and_collect_resources()
+    resources_collected = search_and_collect_resources(auto_surrender)
     if not resources_collected:
         print("No se encontraron más recursos en la zona.")
     time.sleep(2)
@@ -1017,7 +1190,7 @@ def search_resources():
         print(f"Coordenadas después de cambiar de mapa: {current_position}")
 
         while True:
-            resources_collected = search_and_collect_resources()
+            resources_collected = search_and_collect_resources(auto_surrender)
             if not resources_collected:
                 print("No se encontraron más recursos en la zona.")
                 break
@@ -1098,6 +1271,7 @@ def choose_predefined_position():
     else:
         print("Selección inválida. Por favor, intente de nuevo.")
         return choose_predefined_position()
+    
     
     
 /////////////////////
@@ -1183,8 +1357,13 @@ CONFIDENCE_LEVEL = 0.7
 
 # Configuraciones de imágenes y navegación
 IMAGE_OFFSET = 25
-WAIT_TIME = 3
+WAIT_TIME = 4
 SCREENSHOT_SIZE = 100
+
+
+
+MOVEMENTS_TO_PHOENIX_SKELETON = ["right", "right", "right", "right", "up", "up", "up", "up", "left"]
+
 
 # Rutas de Zaaps
 ZAAPS = [
@@ -1362,13 +1541,15 @@ ZAAP_LOCATIONS = [
     {"nombre": "Pueblo de los ganaderos", "coordenadas": "-16,1", "región": "Montaña de los Koalaks"}
 ]
 
+
+
 /////////////////
 Y el centro de todo
 
 main.py :
 # main.py
 
-from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time
+from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time,handle_revival
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
 from modules.characters_tracking import load_character_templates, detect_character, click_on_character, track_and_click_character
@@ -1376,6 +1557,8 @@ from api.bot_controller import interpret_and_execute_gpt_response
 from api.language_model import get_gpt_response
 import inspect
 import modules
+import config_shared 
+
 
 def list_module_functions(module):
     functions_list = []
@@ -1398,13 +1581,17 @@ def main_menu():
     print("2. Buscar mobs en la zona")
     print("3. Leer chat del juego (Funcionalidad en desarrollo)")
     print("4. Combate automático")
-    print("5. Observa el entorno y obtiene datos")
+    print("5. Revive")
     print("6. Interactuar con GPT-4")
     print("7. Explorar funciones del proyecto con GPT-4")
     print("8. Activar detección en tiempo real (YOLO)")
 
     choice = input("Introduce el número de la opción deseada: ")
-    return choice
+    
+    if choice == '1':
+        auto_surrender = input("¿Desea automatizar la rendición en combate? (y/n): ").lower() == 'y'
+        return choice, auto_surrender
+    return choice, False
 
 def interact_with_gpt4():
     user_prompt = input("Describe la misión o consulta para el personaje: ")
@@ -1428,10 +1615,11 @@ def main():
         print("No se pudieron capturar las coordenadas iniciales del mapa.")
 
     while True:
-        user_choice = main_menu()
+        user_choice, auto_surrender = main_menu()
 
         if user_choice == '1':
-            search_resources()
+            search_resources(auto_surrender)
+            handle_revival()
         elif user_choice == '2':
             searchMob()
         elif user_choice == '3':
@@ -1439,7 +1627,8 @@ def main():
         elif user_choice == '4':
             initiate_combat_sequence()
         elif user_choice == '5':
-            track_and_click_character()
+            config_shared.is_dead = True
+            handle_revival()
         elif user_choice == '6':
             interact_with_gpt4()
         elif user_choice == '7':
@@ -1451,3 +1640,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+////////////////////////////////////////////////////////////////////////
+
+
+Hay un archivo nuevo al nuivel de main y config, config_shared, para compartir una variabble que suele cambiar de modulo
+config_shared.py:
+
+is_dead = False
