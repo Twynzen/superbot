@@ -1,5 +1,5 @@
 import pyautogui as pg
-from modules.combat import check_combat_status
+from modules.combat import check_combat_status, is_in_combat, revive_if_dead
 from modules.navigation import change_map, move_to_position, teleport_to_closest_zaap
 from modules.image_processing import capture_map_coordinates
 import time
@@ -103,7 +103,7 @@ def collect_resource(resource_type):
             print(f"Recurso {resource_type} ignorado debido a una excepción.")
     return False
 
-def search_and_collect_resources():
+def search_and_collect_resources(auto_surrender=False):
     """Bucle principal para buscar y recolectar recursos repetidamente hasta que no encuentre más."""
     resources_found = False
     for resource_type in RESOURCES_TYPE:  # Solo iterar sobre los tipos definidos con categoría
@@ -114,8 +114,14 @@ def search_and_collect_resources():
     if not resources_found:
         print("No se encontraron más recursos. Intentando cambiar de mapa...")
         return False
-    return True
 
+    if auto_surrender and is_in_combat():
+        print("Detectado en combate, iniciando secuencia de rendición...")
+        check_combat_status(auto_surrender)
+        revive_if_dead()  # Revisar si el personaje está muerto y revivir si es necesario
+        search_resources(True)
+    
+    return True
 
 
 PREDEFINED_POSITIONS = {
@@ -137,13 +143,13 @@ def move_to_predefined_position(initial_position, target_position):
 
 
 
-def search_resources():
+def search_resources(auto_surrender=False):
     initial_position = capture_map_coordinates()
     print(f"Coordenadas iniciales: {initial_position}")
 
     main_position = choose_predefined_position()
     move_to_predefined_position(initial_position, main_position)
-    resources_collected = search_and_collect_resources()
+    resources_collected = search_and_collect_resources(auto_surrender)
     if not resources_collected:
         print("No se encontraron más recursos en la zona.")
     time.sleep(2)
@@ -157,7 +163,7 @@ def search_resources():
         print(f"Coordenadas después de cambiar de mapa: {current_position}")
 
         while True:
-            resources_collected = search_and_collect_resources()
+            resources_collected = search_and_collect_resources(auto_surrender)
             if not resources_collected:
                 print("No se encontraron más recursos en la zona.")
                 break

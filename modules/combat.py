@@ -3,36 +3,41 @@ import time
 import cv2
 import pytesseract
 import numpy as np
-from modules.navigation import change_map
+from modules.navigation import change_map, clean_coordinates
 from modules.image_processing import capture_screenshot, image_difference, capture_and_process_image
-from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION
-from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges
+from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION, MOVEMENTS_TO_PHOENIX_SKELETON
+from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges, detect_and_click_exit_combat
 import torch
 from ultralytics import YOLO
 import mss
 import random
+import config_shared 
 
 class_colors = {}
+#termina de ajustar ruta a fenix
 
 
-def check_combat_status():
+def check_combat_status(auto_surrender=False):
     """Revisa si el bot está en combate, basado en la presencia de la barra de estado."""
     while True:
         status_bar_image_path = capture_status_bar()
-        
-        # Aquí podrías realizar un procesamiento de imagen adicional si es necesario
-        # Por ejemplo, aplicar filtros, detección de bordes, etc.
 
         if is_status_bar_detected(status_bar_image_path):
             print("Combat is still active...")
-            hover_and_detect_player_name(PLAYER_NAME)
-            
-            # Aquí podrías agregar lógica adicional basada en la información de la barra de estado
         else:
             print("Combat status check indicates combat has ended.")
             break
 
-        time.sleep(3) 
+        if auto_surrender:
+            try:
+                if detect_and_click_exit_combat():
+                    print("Se rindió automáticamente en combate.")
+                    break
+            except Exception as e:
+                screenshot_path = capture_screenshot(region=None, filename="exit_combat_error.png", directory="ojoIA/errors")
+                print(f"Error al intentar detectar y clickear el botón de rendirse: {e}. Captura guardada en {screenshot_path}")
+
+        time.sleep(3)
         
 def is_status_bar_detected(image_path):
     image = cv2.imread(image_path)
@@ -280,3 +285,67 @@ def detect_objects_in_real_time():
 
         # Pausa de 3 segundos
         time.sleep(3)
+        
+def is_in_combat():
+    """Revisa si el bot está en combate detectando una imagen específica que solo aparece en combate."""
+    try:
+        combat_indicator_location = pg.locateCenterOnScreen('ojoIA/combat_indicator.png', confidence=0.8)
+        return combat_indicator_location is not None
+    except Exception as e:
+        print(f"Error al intentar detectar si estamos en combate: {e}")
+    return False
+
+def revive_if_dead():
+    if config_shared.is_dead:
+        time.sleep(WAIT_TIME)
+        current_position = clean_coordinates(capture_map_coordinates()) 
+        print(current_position,"POSICION DE INICIO DE FENIX")
+        if current_position == "9,16":
+            print("Iniciando secuencia para revivir en el Fénix desde la posición 9,16...")
+            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+                change_map(move)
+                time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
+
+            phoenix_button_x = 620  # Ajustar según sea necesario
+            phoenix_button_y = 250  # Ajustar según sea necesario
+
+            pg.click(phoenix_button_x, phoenix_button_y)
+            print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
+        else:
+            print("Posición actual no es 9,16, reanudando recolección de recursos...")
+        config_shared.is_dead = False  # Restablecer bandera de muerto a False
+        print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
+    else:
+        print("Personaje no está muerto, reanudando recolección de recursos...")
+        
+def handle_revival():
+    """Maneja el flujo de revivir al Fénix desde cualquier ubicación."""
+    if config_shared.is_dead:
+        time.sleep(WAIT_TIME)
+        current_position = clean_coordinates(capture_map_coordinates())
+        print(f"Posición actual: {current_position}")
+        if current_position == "9,16":
+            print("Ya en la posición del Fénix. Iniciando proceso de revivir...")
+            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+                change_map(move)
+                time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
+
+            phoenix_button_x = 620  # Ajustar según sea necesario
+            phoenix_button_y = 250  # Ajustar según sea necesario
+
+            pg.click(phoenix_button_x, phoenix_button_y)
+            print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
+            config_shared.is_dead = False  # Restablecer bandera de muerto a False
+            print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
+        else:
+            print("Moviéndose al Fénix desde la posición actual...")
+            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+                change_map(move)
+                time.sleep(WAIT_TIME)
+                current_position = clean_coordinates(capture_map_coordinates())
+                print(f"Posición actualizada: {current_position}")
+                if current_position == "9,16":
+                    break
+            handle_revival()  # Llamada recursiva para manejar el proceso de revivir desde "9,16"
+    else:
+        print("Personaje no está muerto. No se necesita revivir.")

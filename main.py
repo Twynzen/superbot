@@ -1,6 +1,6 @@
 # main.py
 
-from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time
+from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time,handle_revival
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
 from modules.characters_tracking import load_character_templates, detect_character, click_on_character, track_and_click_character
@@ -8,6 +8,8 @@ from api.bot_controller import interpret_and_execute_gpt_response
 from api.language_model import get_gpt_response
 import inspect
 import modules
+import config_shared 
+
 
 def list_module_functions(module):
     functions_list = []
@@ -30,13 +32,17 @@ def main_menu():
     print("2. Buscar mobs en la zona")
     print("3. Leer chat del juego (Funcionalidad en desarrollo)")
     print("4. Combate automático")
-    print("5. Observa el entorno y obtiene datos")
+    print("5. Revive")
     print("6. Interactuar con GPT-4")
     print("7. Explorar funciones del proyecto con GPT-4")
     print("8. Activar detección en tiempo real (YOLO)")
 
     choice = input("Introduce el número de la opción deseada: ")
-    return choice
+    
+    if choice == '1':
+        auto_surrender = input("¿Desea automatizar la rendición en combate? (y/n): ").lower() == 'y'
+        return choice, auto_surrender
+    return choice, False
 
 def interact_with_gpt4():
     user_prompt = input("Describe la misión o consulta para el personaje: ")
@@ -60,10 +66,11 @@ def main():
         print("No se pudieron capturar las coordenadas iniciales del mapa.")
 
     while True:
-        user_choice = main_menu()
+        user_choice, auto_surrender = main_menu()
 
         if user_choice == '1':
-            search_resources()
+            search_resources(auto_surrender)
+            handle_revival()
         elif user_choice == '2':
             searchMob()
         elif user_choice == '3':
@@ -71,7 +78,8 @@ def main():
         elif user_choice == '4':
             initiate_combat_sequence()
         elif user_choice == '5':
-            track_and_click_character()
+            config_shared.is_dead = True
+            handle_revival()
         elif user_choice == '6':
             interact_with_gpt4()
         elif user_choice == '7':

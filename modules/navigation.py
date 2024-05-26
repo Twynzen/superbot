@@ -84,15 +84,33 @@ def get_sorted_zaaps_by_distance(position):
     distances.sort(key=lambda x: x[1])
     return distances
 
+
+
+def check_zaap_route_exceptions(current_position, target_zaap):
+    if current_position == '12,12' and target_zaap == '10,22':
+        print("Excepción de Zaap detectada: Ignorando Zaap 10,22 desde la posición 12,12.")
+        return True  # Indica que esta excepción aplica y debe ser ignorada
+    return False
+
 def teleport_to_closest_zaap(current_position, target_position):
     # Listar Zaaps en orden de cercanía desde la posición actual
     sorted_zaaps_to_current = get_sorted_zaaps_by_distance(current_position)
     print("Zaaps ordenados por cercanía desde la posición actual:")
     for zaap, distance in sorted_zaaps_to_current:
         zaap_name = get_zaap_name_by_coordinates(zaap)
-        print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
+        # print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
 
-    closest_zaap_to_current = sorted_zaaps_to_current[0][0]  # El más cercano
+    # Verificar excepciones de ruta de Zaap y filtrar Zaap 10,22 si estamos en 12,12
+    if current_position == '12,12':
+        sorted_zaaps_to_current = [zaap for zaap in sorted_zaaps_to_current if clean_coordinates(zaap[0]) != '10,22']
+        print("Excepción de Zaap detectada: Ignorando Zaap 10,22 desde la posición 12,12.")
+
+    if not sorted_zaaps_to_current:
+        print("No se encontraron Zaaps adecuados después de aplicar las excepciones. Moviéndose normalmente.")
+        move_to_position(target_position)
+        return
+
+    closest_zaap_to_current = sorted_zaaps_to_current[0][0]  # El más cercano filtrado
 
     # Listar Zaaps en orden de cercanía desde la posición de destino
     sorted_zaaps_to_target = get_sorted_zaaps_by_distance(target_position)
@@ -131,11 +149,7 @@ def teleport_to_closest_zaap(current_position, target_position):
             print("No Zaap detected at current position. Moving normally.")
     else:
         print("No close Zaap found for teleportation. Moving normally.")
-
-
-
-
-
+        
 def change_map(direction):
     if direction not in TOOLTIP_REGIONS:
         raise ValueError(f"Dirección inválida: {direction}. Las direcciones válidas son: {list(TOOLTIP_REGIONS.keys())}")
@@ -260,5 +274,16 @@ def check_route_exceptions(current_position, target_position):
         new_position = capture_map_coordinates()
         new_x, new_y = map(int, clean_coordinates(new_position).split(','))
         return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción
-
+    
+    if current_position == '-7,-9' and target_position == '-5,-8':
+        print("Excepción de ruta detectada: de -7,-9 a -5,-8, moviéndose hacia arriba.")
+        change_map('up')
+        time.sleep(WAIT_TIME)
+        new_position = capture_map_coordinates()
+        new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+        return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción  
+    
     return None, None, False
+
+# navigation.py
+

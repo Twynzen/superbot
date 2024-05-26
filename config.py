@@ -17,8 +17,13 @@ CONFIDENCE_LEVEL = 0.7
 
 # Configuraciones de imágenes y navegación
 IMAGE_OFFSET = 25
-WAIT_TIME = 3
+WAIT_TIME = 4
 SCREENSHOT_SIZE = 100
+
+
+
+MOVEMENTS_TO_PHOENIX_SKELETON = ["right", "right", "right", "right", "up", "up", "up", "up", "left"]
+
 
 # Rutas de Zaaps
 ZAAPS = [
@@ -195,3 +200,5 @@ ZAAP_LOCATIONS = [
     {"nombre": "Sierra de Cania", "coordenadas": "-13,28", "región": "Llanuras de Cania"},
     {"nombre": "Pueblo de los ganaderos", "coordenadas": "-16,1", "región": "Montaña de los Koalaks"}
 ]
+
+
