@@ -1187,51 +1187,9 @@ def search_resources(auto_surrender=False):
                 break
             time.sleep(2)
 
-    while True:
-        second_position_choice = input("¿Desea definir una segunda posición predefinida? (y/n): ")
-        if second_position_choice.lower() == 'y':
-            second_position = choose_predefined_position()
-            move_to_predefined_position(current_position, second_position)
-
-            path = PREDEFINED_POSITIONS[second_position]
-            for direction in path:
-                change_map(direction)
-                time.sleep(WAIT_TIME)
-
-                current_position = capture_map_coordinates()
-                print(f"Coordenadas después de cambiar de mapa: {current_position}")
-
-                while True:
-                    resources_collected = search_and_collect_resources()
-                    if not resources_collected:
-                        print("No se encontraron más recursos en la zona.")
-                        break
-                    time.sleep(2)
-
-            third_position_choice = input("¿Desea definir una tercera posición predefinida? (y/n): ")
-            if third_position_choice.lower() == 'y':
-                third_position = choose_predefined_position()
-                move_to_predefined_position(current_position, third_position)
-
-                path = PREDEFINED_POSITIONS[third_position]
-                for direction in path:
-                    change_map(direction)
-                    time.sleep(WAIT_TIME)
-
-                    current_position = capture_map_coordinates()
-                    print(f"Coordenadas después de cambiar de mapa: {current_position}")
-
-                    while True:
-                        resources_collected = search_and_collect_resources()
-                        if not resources_collected:
-                            print("No se encontraron más recursos en la zona.")
-                            break
-                        time.sleep(2)
-            else:
-                print("No se definió una tercera posición.")
-                break
-        else:
-            break
+    print("Patrón de direcciones completado. Esperando 5 segundos antes de iniciar una nueva ruta.")
+    time.sleep(5)
+    search_resources(auto_surrender)
         
 def calculate_distance(pos1, pos2):
     x1, y1 = map(int, clean_coordinates(pos1).split(','))
@@ -1380,7 +1338,7 @@ PHOENIX_ROUTES = {
     "-3,-13": {
         "movements": MOVEMENTS_TO_PHOENIX_STROPAJO,
         "phoenix_button_x": 820,
-        "phoenix_button_y": 550
+        "phoenix_button_y": 520
     }
 }
 # Rutas de Zaaps
@@ -1396,6 +1354,7 @@ RESOURCES_TYPE = {
     "cebada": "cereals",
     "avena": "cereals",
     "castano": "wood",
+    "arce": "wood",
     "roble": "wood",
     "fresno": "wood",
     "nogal": "wood",
@@ -1417,7 +1376,9 @@ RESOURCE_PATHS = {
         ],
         "cebada": [
             "ojoIA/resources/cereals/cebada1.PNG",
-            "ojoIA/resources/cereals/cebada2.PNG"
+            "ojoIA/resources/cereals/cebada2.PNG",
+            "ojoIA/resources/cereals/cebada3.PNG"
+            
         ],
         "avena": [
             "ojoIA/resources/cereals/avena1.PNG"
@@ -1453,7 +1414,12 @@ RESOURCE_PATHS = {
         "roble": [
             "ojoIA/resources/wood/roble1.PNG",
             "ojoIA/resources/wood/roble2.PNG"
+        ],
+         "arce": [
+            "ojoIA/resources/wood/arce1.PNG",
+            "ojoIA/resources/wood/arce2.PNG"
         ]
+        
     },
     "herbage": {
         "ortiga": [
@@ -1513,7 +1479,7 @@ DIRECTION_PATH_ROBLE = [
     'up', 'up', 'up', 'up', 'right', 'up', 'left', 'up',
     'right', 'up', 'left', 'up', 'left', 'left',
     'left', 'left', 'left', 'left', 'left', 'down', 'down', 'left',
-    'down', 'right', 'down', 'down', 'down', 'right', 'right', 'down', 'down', 'down', 'right'
+    'down', 'right', 'down', 'down', 'down', 'down', 'right', 'down', 'down', 'right', 'right','right'
 ]
 DIRECTION_PATH_TREBOL = [
     'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down',
@@ -1565,7 +1531,6 @@ PREDEFINED_POSITIONS = {
     "-11,-8": DIRECTION_PATH_ROBLE,
     "3,21": DIRECTION_PATH_TREBOL
 }
-
 
 
 /////////////////

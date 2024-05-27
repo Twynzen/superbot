@@ -35,7 +35,7 @@ PHOENIX_ROUTES = {
     "-3,-13": {
         "movements": MOVEMENTS_TO_PHOENIX_STROPAJO,
         "phoenix_button_x": 820,
-        "phoenix_button_y": 550
+        "phoenix_button_y": 520
     }
 }
 # Rutas de Zaaps
@@ -51,6 +51,7 @@ RESOURCES_TYPE = {
     "cebada": "cereals",
     "avena": "cereals",
     "castano": "wood",
+    "arce": "wood",
     "roble": "wood",
     "fresno": "wood",
     "nogal": "wood",
@@ -72,7 +73,9 @@ RESOURCE_PATHS = {
         ],
         "cebada": [
             "ojoIA/resources/cereals/cebada1.PNG",
-            "ojoIA/resources/cereals/cebada2.PNG"
+            "ojoIA/resources/cereals/cebada2.PNG",
+            "ojoIA/resources/cereals/cebada3.PNG"
+            
         ],
         "avena": [
             "ojoIA/resources/cereals/avena1.PNG"
@@ -108,7 +111,12 @@ RESOURCE_PATHS = {
         "roble": [
             "ojoIA/resources/wood/roble1.PNG",
             "ojoIA/resources/wood/roble2.PNG"
+        ],
+         "arce": [
+            "ojoIA/resources/wood/arce1.PNG",
+            "ojoIA/resources/wood/arce2.PNG"
         ]
+        
     },
     "herbage": {
         "ortiga": [
@@ -168,7 +176,7 @@ DIRECTION_PATH_ROBLE = [
     'up', 'up', 'up', 'up', 'right', 'up', 'left', 'up',
     'right', 'up', 'left', 'up', 'left', 'left',
     'left', 'left', 'left', 'left', 'left', 'down', 'down', 'left',
-    'down', 'right', 'down', 'down', 'down', 'right', 'right', 'down', 'down', 'down', 'right'
+    'down', 'right', 'down', 'down', 'down', 'down', 'right', 'down', 'down', 'right', 'right','right'
 ]
 DIRECTION_PATH_TREBOL = [
     'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down',

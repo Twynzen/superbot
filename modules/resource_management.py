@@ -159,51 +159,9 @@ def search_resources(auto_surrender=False):
                 break
             time.sleep(2)
 
-    while True:
-        second_position_choice = input("¿Desea definir una segunda posición predefinida? (y/n): ")
-        if second_position_choice.lower() == 'y':
-            second_position = choose_predefined_position()
-            move_to_predefined_position(current_position, second_position)
-
-            path = PREDEFINED_POSITIONS[second_position]
-            for direction in path:
-                change_map(direction)
-                time.sleep(WAIT_TIME)
-
-                current_position = capture_map_coordinates()
-                print(f"Coordenadas después de cambiar de mapa: {current_position}")
-
-                while True:
-                    resources_collected = search_and_collect_resources()
-                    if not resources_collected:
-                        print("No se encontraron más recursos en la zona.")
-                        break
-                    time.sleep(2)
-
-            third_position_choice = input("¿Desea definir una tercera posición predefinida? (y/n): ")
-            if third_position_choice.lower() == 'y':
-                third_position = choose_predefined_position()
-                move_to_predefined_position(current_position, third_position)
-
-                path = PREDEFINED_POSITIONS[third_position]
-                for direction in path:
-                    change_map(direction)
-                    time.sleep(WAIT_TIME)
-
-                    current_position = capture_map_coordinates()
-                    print(f"Coordenadas después de cambiar de mapa: {current_position}")
-
-                    while True:
-                        resources_collected = search_and_collect_resources()
-                        if not resources_collected:
-                            print("No se encontraron más recursos en la zona.")
-                            break
-                        time.sleep(2)
-            else:
-                print("No se definió una tercera posición.")
-                break
-        else:
-            break
+    print("Patrón de direcciones completado. Esperando 5 segundos antes de iniciar una nueva ruta.")
+    time.sleep(5)
+    search_resources(auto_surrender)
         
 def calculate_distance(pos1, pos2):
     x1, y1 = map(int, clean_coordinates(pos1).split(','))
