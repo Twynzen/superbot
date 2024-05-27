@@ -3,15 +3,10 @@ from modules.combat import check_combat_status, is_in_combat, revive_if_dead
 from modules.navigation import change_map, move_to_position, teleport_to_closest_zaap
 from modules.image_processing import capture_map_coordinates
 import time
-from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME, RESOURCES_TYPE,DIRECTION_PATH_ESCARAHOJA_ZAAP,DIRECTION_PATH_ROBLE, DIRECTION_PATH_ABSTRUB_ZAAP, ZAAPS, DIRECTION_PATH_TREBOL
+import threading
+import random
+from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME, RESOURCES_TYPE,DIRECTION_PATH_ESCARAHOJA_ZAAP,DIRECTION_PATH_ROBLE, DIRECTION_PATH_ABSTRUB_ZAAP, ZAAPS, DIRECTION_PATH_TREBOL,PREDEFINED_POSITIONS
 
-
-PREDEFINED_POSITIONS = {
-    "5,-18": DIRECTION_PATH_ABSTRUB_ZAAP,
-    "-1,24": DIRECTION_PATH_ESCARAHOJA_ZAAP,
-    "-11,-8": DIRECTION_PATH_ROBLE,
-    "3,21": DIRECTION_PATH_TREBOL
-}
 
 EXCEPTIONS = {
         'fresno': {
@@ -124,12 +119,7 @@ def search_and_collect_resources(auto_surrender=False):
     return True
 
 
-PREDEFINED_POSITIONS = {
-    "5,-18": DIRECTION_PATH_ABSTRUB_ZAAP,
-    "-1,24": DIRECTION_PATH_ESCARAHOJA_ZAAP,
-    "-11,-8": DIRECTION_PATH_ROBLE,
-    "3,21": DIRECTION_PATH_TREBOL
-}
+
 
 def move_to_predefined_position(initial_position, target_position):
     initial_position = clean_coordinates(initial_position)
@@ -232,17 +222,29 @@ def get_closest_zaap(current_position, target_position):
 
 
 
-
 def choose_predefined_position():
     print("Seleccione una posición predefinida:")
     positions = list(PREDEFINED_POSITIONS.keys())
     for index, position in enumerate(positions, start=1):
         print(f"{index}. {position}")
-    choice = int(input("Ingrese el número de la posición deseada: "))
-    if 1 <= choice <= len(positions):
-        return positions[choice - 1]
+
+    choice = [None]  # Usamos una lista para poder modificar el valor desde la función interna
+
+    def get_user_input():
+        try:
+            choice[0] = int(input("Ingrese el número de la posición deseada: "))
+        except ValueError:
+            pass
+
+    input_thread = threading.Thread(target=get_user_input)
+    input_thread.start()
+    input_thread.join(timeout=5)  # Esperar 5 segundos
+
+    if choice[0] is not None and 1 <= choice[0] <= len(positions):
+        return positions[choice[0] - 1]
     else:
-        print("Selección inválida. Por favor, intente de nuevo.")
-        return choose_predefined_position()
-    
-    
+        # Filtrar la posición "5,-18" y elegir una aleatoria de las restantes
+        filtered_positions = [pos for pos in positions if pos != "5,-18"]
+        random_choice = random.choice(filtered_positions)
+        print(f"No se seleccionó ninguna opción en 5 segundos. Seleccionando aleatoriamente: {random_choice}")
+        return random_choice

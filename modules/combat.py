@@ -5,7 +5,7 @@ import pytesseract
 import numpy as np
 from modules.navigation import change_map, clean_coordinates
 from modules.image_processing import capture_screenshot, image_difference, capture_and_process_image
-from config import COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION, MOVEMENTS_TO_PHOENIX_SKELETON
+from config import PHOENIX_ROUTES, COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION, MOVEMENTS_TO_PHOENIX_SKELETON
 from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges, detect_and_click_exit_combat
 import torch
 from ultralytics import YOLO
@@ -300,18 +300,19 @@ def revive_if_dead():
         time.sleep(WAIT_TIME)
         current_position = clean_coordinates(capture_map_coordinates()) 
         print(current_position,"POSICION DE INICIO DE FENIX")
-        if current_position == "9,16":
-            print("Iniciando secuencia para revivir en el Fénix desde la posición 9,16...")
-            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+        if current_position in PHOENIX_ROUTES:
+            print(f"Iniciando secuencia para revivir en el Fénix desde la posición {current_position}...")
+            route_info = PHOENIX_ROUTES[current_position]
+            
+            for move in route_info["movements"]:
                 change_map(move)
                 time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
 
-            phoenix_button_x = 620  # Ajustar según sea necesario
-            phoenix_button_y = 250  # Ajustar según sea necesario
+            phoenix_button_x = route_info["phoenix_button_x"]
+            phoenix_button_y = route_info["phoenix_button_y"]
 
             pg.click(phoenix_button_x, phoenix_button_y)
             print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
-        else:
             print("Posición actual no es 9,16, reanudando recolección de recursos...")
         config_shared.is_dead = False  # Restablecer bandera de muerto a False
         print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")

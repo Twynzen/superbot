@@ -22,9 +22,22 @@ SCREENSHOT_SIZE = 100
 
 
 
+
 MOVEMENTS_TO_PHOENIX_SKELETON = ["right", "right", "right", "right", "up", "up", "up", "up", "left"]
 
-
+MOVEMENTS_TO_PHOENIX_STROPAJO = ["right", "right", "right", "right", "up",  "right"]
+PHOENIX_ROUTES = {
+    "9,16": {
+        "movements": MOVEMENTS_TO_PHOENIX_SKELETON,  # Ejemplo de movimientos
+        "phoenix_button_x": 620,
+        "phoenix_button_y": 250
+    },
+    "-3,-13": {
+        "movements": MOVEMENTS_TO_PHOENIX_STROPAJO,
+        "phoenix_button_x": 820,
+        "phoenix_button_y": 550
+    }
+}
 # Rutas de Zaaps
 ZAAPS = [
     "25,-4", "27,-14", "1,-32", "10,22", "13,26", "-31,-56", "-26,37", "-78,-41",
@@ -201,4 +214,9 @@ ZAAP_LOCATIONS = [
     {"nombre": "Pueblo de los ganaderos", "coordenadas": "-16,1", "región": "Montaña de los Koalaks"}
 ]
 
-
+PREDEFINED_POSITIONS = {
+    "5,-18": DIRECTION_PATH_ABSTRUB_ZAAP,
+    "-1,24": DIRECTION_PATH_ESCARAHOJA_ZAAP,
+    "-11,-8": DIRECTION_PATH_ROBLE,
+    "3,21": DIRECTION_PATH_TREBOL
+}

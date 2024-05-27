@@ -173,7 +173,7 @@ def pause_and_validate_mouse_position():
     """Pausa la ejecución y muestra la posición actual del mouse para validación."""
     mouse_x, mouse_y = pg.position()
     print(f"Mouse position: ({mouse_x}, {mouse_y})")
-    input("Press Enter to continue...")
+    #input("Press Enter to continue...")
 
 def detect_and_click_exit_combat():
     try:
