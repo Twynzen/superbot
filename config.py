@@ -43,7 +43,7 @@ ZAAPS = [
     "25,-4", "27,-14", "1,-32", "10,22", "13,26", "-31,-56", "-26,37", "-78,-41",
     "35,12", "-46,18", "-1,13", "-1,24", "7,-4", "5,-18", "-27,-36", "3,-5", "-5,-8",
     "-2,0", "39,-82", "20,29", "-25,12", "-20,-20", "-3,-42", "-5,-23", "-17,-47",
-    "-34,8", "0,-56", "-13,28", "-16,1"
+    "-34,8", "0,-56", "-13,-28", "-16,1"
 ]
 # Tipos de recursos y sus categorías
 RESOURCES_TYPE = {
@@ -52,6 +52,7 @@ RESOURCES_TYPE = {
     "avena": "cereals",
     "castano": "wood",
     "arce": "wood",
+    "bombu": "wood",
     "roble": "wood",
     "fresno": "wood",
     "nogal": "wood",
@@ -79,6 +80,9 @@ RESOURCE_PATHS = {
         ],
         "avena": [
             "ojoIA/resources/cereals/avena1.PNG"
+            "ojoIA/resources/cereals/avena2.PNG"            
+            "ojoIA/resources/cereals/avena3.PNG"
+            
         ]
     },
        #"minerals": {
@@ -110,11 +114,25 @@ RESOURCE_PATHS = {
         ],
         "roble": [
             "ojoIA/resources/wood/roble1.PNG",
-            "ojoIA/resources/wood/roble2.PNG"
+            "ojoIA/resources/wood/roble2.PNG",
+            "ojoIA/resources/wood/roble3.PNG",
+            "ojoIA/resources/wood/roble4.PNG",
         ],
          "arce": [
             "ojoIA/resources/wood/arce1.PNG",
-            "ojoIA/resources/wood/arce2.PNG"
+            "ojoIA/resources/wood/arce2.PNG",
+            "ojoIA/resources/wood/arce3.PNG"
+            
+        ],
+          "bombu": [
+            "ojoIA/resources/wood/bombu1.PNG",
+            "ojoIA/resources/wood/bombu2.PNG",
+            "ojoIA/resources/wood/bombu3.PNG",
+            "ojoIA/resources/wood/bombu4.PNG",
+            "ojoIA/resources/wood/bombu5.PNG",
+            "ojoIA/resources/wood/bombu6.PNG"
+            "ojoIA/resources/wood/bombu7.PNG",
+            "ojoIA/resources/wood/bombu8.PNG"
         ]
         
     },
@@ -182,6 +200,14 @@ DIRECTION_PATH_TREBOL = [
     'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down', 'down',
     'right', 'right', 'right', 'right', 'up', 'right', 'right'
 ]
+#2,31
+DIRECTION_PATH_ARCE = ["left", "down", "down", "left", "down", "left", "up", "left", "up", "right", "right", "right"]
+#-13,-28
+DIRECTION_PATH_BOMBU = [
+    "left", "up", "up", "right", "right", "down", "right", "up", "up", "up", "up",
+    "right", "right", "down", "left", "down", "right", "down", "down", "down",
+    "right", "up", "up", "right", "up", "up", "up", "left"
+]
 
 # Región de detección de zaaps (toda la pantalla)
 ZAAP_DETECTION_REGION = (0, 0, 1920, 1080)
@@ -218,7 +244,7 @@ ZAAP_LOCATIONS = [
     {"nombre": "Llanuras Rocosas", "coordenadas": "-17,-47", "región": "Llanuras de Cania"},
     {"nombre": "Pueblo de los dopeuls", "coordenadas": "-34,8", "región": "Llanuras de Cania"},
     {"nombre": "Pueblo de los kanigs", "coordenadas": "0,-56", "región": "Llanuras de Cania"},
-    {"nombre": "Sierra de Cania", "coordenadas": "-13,28", "región": "Llanuras de Cania"},
+    {"nombre": "Sierra de Cania", "coordenadas": "-13,-28", "región": "Llanuras de Cania"},
     {"nombre": "Pueblo de los ganaderos", "coordenadas": "-16,1", "región": "Montaña de los Koalaks"}
 ]
 
@@ -226,5 +252,7 @@ PREDEFINED_POSITIONS = {
     "5,-18": DIRECTION_PATH_ABSTRUB_ZAAP,
     "-1,24": DIRECTION_PATH_ESCARAHOJA_ZAAP,
     "-11,-8": DIRECTION_PATH_ROBLE,
-    "3,21": DIRECTION_PATH_TREBOL
+    "3,21": DIRECTION_PATH_TREBOL,
+    "2,31":DIRECTION_PATH_ARCE,
+    "-13,-28": DIRECTION_PATH_BOMBU
 }

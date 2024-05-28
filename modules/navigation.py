@@ -53,6 +53,7 @@ def detect_and_click_zaap():
     for zaap_image in os.listdir(ZAAP_IMAGES_DIR):
         zaap_image_path = os.path.join(ZAAP_IMAGES_DIR, zaap_image)
         try:
+            print(f"Zaap BUSCADO: {zaap_image}")
             location = pg.locateCenterOnScreen(zaap_image_path, confidence=0.8)
             if location:
                 pg.click(location)
@@ -117,7 +118,7 @@ def teleport_to_closest_zaap(current_position, target_position):
     print("Zaaps ordenados por cercanía desde la posición de destino:")
     for zaap, distance in sorted_zaaps_to_target:
         zaap_name = get_zaap_name_by_coordinates(zaap)
-        print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
+        #print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
 
     closest_zaap_to_target = sorted_zaaps_to_target[0][0]  # El más cercano
 
@@ -276,6 +277,22 @@ def check_route_exceptions(current_position, target_position):
         return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción
     
     if current_position == '-7,-9' and target_position == '-5,-8':
+        print("Excepción de ruta detectada: de -7,-9 a -5,-8, moviéndose hacia arriba.")
+        change_map('up')
+        time.sleep(WAIT_TIME)
+        new_position = capture_map_coordinates()
+        new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+        return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción  
+    
+    if current_position == '1,32' and target_position == '-1,24':
+        print("Excepción de ruta detectada: de -7,-9 a -5,-8, moviéndose hacia arriba.")
+        change_map('up')
+        time.sleep(WAIT_TIME)
+        new_position = capture_map_coordinates()
+        new_x, new_y = map(int, clean_coordinates(new_position).split(','))
+        return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción  
+    
+    if current_position == '1,31' and target_position == '-1,24':
         print("Excepción de ruta detectada: de -7,-9 a -5,-8, moviéndose hacia arriba.")
         change_map('up')
         time.sleep(WAIT_TIME)

@@ -12,6 +12,9 @@ EXCEPTIONS = {
         'fresno': {
             'ignored_positions': [(1465, 862)],  # Lista de posiciones a ignorar
         },
+         'arce': {
+            'ignored_positions': [(1537, 152)],  # Lista de posiciones a ignorar
+        },
         'trigo': {
             'special_click_offsets': [(907, 588, 4, 0)],  # (x, y, offset_x, offset_y) donde x, y es la posición a buscar y (offset_x, offset_y) es cuánto mover el mouse antes de clickear
         }
@@ -92,7 +95,7 @@ def collect_resource(resource_type):
         if new_location:
             pg.click(new_location)
             time.sleep(WAIT_TIME)
-            print(f"Recolectado {resource_type}.")
+            print(f"Recolectado {resource_type} en la posición {new_location}.") 
             return True
         else:
             print(f"Recurso {resource_type} ignorado debido a una excepción.")

@@ -151,23 +151,6 @@ def capture_combat_map_frame():
     frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
     return frame
 
-def find_zaap_and_click():
-    """
-    Busca un zaap en la pantalla y hace clic en él si se encuentra.
-    """
-    for zaap_image in os.listdir(ZAAP_IMAGES_DIR):
-        zaap_path = os.path.join(ZAAP_IMAGES_DIR, zaap_image)
-        try:
-            location = pg.locateCenterOnScreen(zaap_path, confidence=CONFIDENCE_LEVEL)
-            if location:
-                pg.click(location)
-                time.sleep(WAIT_TIME)
-                return True
-        except pg.ImageNotFoundException:
-            continue  # Si no se encuentra la imagen, pasa a la siguiente
-        except Exception as e:
-            print(f"Error al buscar el zaap en {zaap_path}: {e}")
-    return False
 
 def pause_and_validate_mouse_position():
     """Pausa la ejecución y muestra la posición actual del mouse para validación."""
@@ -184,7 +167,7 @@ def detect_and_click_exit_combat():
         print(f"Click en botón de rendirse en las coordenadas ({exit_button_x}, {exit_button_y}).")
         pause_and_validate_mouse_position()
 
-        time.sleep(1)  # Espera un momento para que aparezca el cuadro de confirmación
+        time.sleep(2)  # Espera un momento para que aparezca el cuadro de confirmación
 
         confirm_button_x = 940  # Ajustar según sea necesario
         confirm_button_y = 580  # Ajustar según sea necesario
@@ -193,7 +176,7 @@ def detect_and_click_exit_combat():
         print(f"Click en botón 'Ok' en las coordenadas ({confirm_button_x}, {confirm_button_y}).")
         pause_and_validate_mouse_position()
 
-        time.sleep(1)
+        time.sleep(2)
 
         # Verificar si aparece el cuadro de diálogo de muerte en toda la pantalla
         death_dialog_location = pg.locateCenterOnScreen('ojoIA/death_dialog.png', confidence=0.3)
@@ -209,7 +192,7 @@ def detect_and_click_exit_combat():
             print("No se detectó el cuadro de diálogo de muerte, siguiendo flujo de derrota normal.")
         
         
-        time.sleep(1)
+        time.sleep(2)
 
         close_button_x = 950  # Ajustar según sea necesario
         close_button_y = 630  # Ajustar según sea necesario
