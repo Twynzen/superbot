@@ -105,6 +105,11 @@ def teleport_to_closest_zaap(current_position, target_position):
     if current_position == '12,12':
         sorted_zaaps_to_current = [zaap for zaap in sorted_zaaps_to_current if clean_coordinates(zaap[0]) != '10,22']
         print("Excepción de Zaap detectada: Ignorando Zaap 10,22 desde la posición 12,12.")
+    
+    if current_position == '-16,36':
+        pg.press('3')
+        sorted_zaaps_to_current = [zaap for zaap in sorted_zaaps_to_current if clean_coordinates(zaap[0]) != '-26,37']
+        print("Excepción de Zaap detectada: Ignorando Zaap -26,37' desde la posición -16,36.") 
 
     if not sorted_zaaps_to_current:
         print("No se encontraron Zaaps adecuados después de aplicar las excepciones. Moviéndose normalmente.")
@@ -299,6 +304,8 @@ def check_route_exceptions(current_position, target_position):
         new_position = capture_map_coordinates()
         new_x, new_y = map(int, clean_coordinates(new_position).split(','))
         return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción  
+    
+    
     
     return None, None, False
 

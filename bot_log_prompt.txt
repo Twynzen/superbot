@@ -92,13 +92,13 @@ import pytesseract
 import numpy as np
 from modules.navigation import change_map, clean_coordinates
 from modules.image_processing import capture_screenshot, image_difference, capture_and_process_image
-from config import PHOENIX_ROUTES, COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION, MOVEMENTS_TO_PHOENIX_SKELETON
+from config import PHOENIX_ROUTES, COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION
 from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges, detect_and_click_exit_combat
 import torch
 from ultralytics import YOLO
 import mss
 import random
-import config_shared 
+import config_shared  
 
 class_colors = {}
 #termina de ajustar ruta a fenix
@@ -381,45 +381,24 @@ def is_in_combat():
     except Exception as e:
         print(f"Error al intentar detectar si estamos en combate: {e}")
     return False
-
-def revive_if_dead():
-    if config_shared.is_dead:
-        time.sleep(WAIT_TIME)
-        current_position = clean_coordinates(capture_map_coordinates()) 
-        print(current_position,"POSICION DE INICIO DE FENIX")
-        if current_position in PHOENIX_ROUTES:
-            print(f"Iniciando secuencia para revivir en el Fénix desde la posición {current_position}...")
-            route_info = PHOENIX_ROUTES[current_position]
-            
-            for move in route_info["movements"]:
-                change_map(move)
-                time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
-
-            phoenix_button_x = route_info["phoenix_button_x"]
-            phoenix_button_y = route_info["phoenix_button_y"]
-
-            pg.click(phoenix_button_x, phoenix_button_y)
-            print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
-            print("Posición actual no es 9,16, reanudando recolección de recursos...")
-        config_shared.is_dead = False  # Restablecer bandera de muerto a False
-        print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
-    else:
-        print("Personaje no está muerto, reanudando recolección de recursos...")
-        
-def handle_revival():
+def handle_revive():
     """Maneja el flujo de revivir al Fénix desde cualquier ubicación."""
     if config_shared.is_dead:
         time.sleep(WAIT_TIME)
         current_position = clean_coordinates(capture_map_coordinates())
         print(f"Posición actual: {current_position}")
-        if current_position == "9,16":
+        print(PHOENIX_ROUTES, "RUTA?")
+
+        if current_position in PHOENIX_ROUTES:
+            phoenix_route = PHOENIX_ROUTES[current_position]
             print("Ya en la posición del Fénix. Iniciando proceso de revivir...")
-            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+
+            for move in phoenix_route["movements"]:
                 change_map(move)
                 time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
 
-            phoenix_button_x = 620  # Ajustar según sea necesario
-            phoenix_button_y = 250  # Ajustar según sea necesario
+            phoenix_button_x = phoenix_route["phoenix_button_x"]
+            phoenix_button_y = phoenix_route["phoenix_button_y"]
 
             pg.click(phoenix_button_x, phoenix_button_y)
             print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
@@ -427,17 +406,60 @@ def handle_revival():
             print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
         else:
             print("Moviéndose al Fénix desde la posición actual...")
-            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
-                change_map(move)
-                time.sleep(WAIT_TIME)
-                current_position = clean_coordinates(capture_map_coordinates())
-                print(f"Posición actualizada: {current_position}")
-                if current_position == "9,16":
-                    break
-            handle_revival()  # Llamada recursiva para manejar el proceso de revivir desde "9,16"
+            for route_key in PHOENIX_POSITIONS:
+                if route_key in current_position:
+                    phoenix_route = PHOENIX_ROUTES[route_key]
+                    for move in phoenix_route["movements"]:
+                        change_map(move)
+                        time.sleep(WAIT_TIME)
+                        current_position = clean_coordinates(capture_map_coordinates())
+                        print(f"Posición actualizada: {current_position}")
+                        if current_position in PHOENIX_ROUTES:
+                            handle_revive()  # Llamada recursiva para manejar el proceso de revivir desde la nueva posición
+                            return
     else:
         print("Personaje no está muerto. No se necesita revivir.")
-        
+def handle_revive():
+    """Maneja el flujo de revivir al Fénix desde cualquier ubicación."""
+    if config_shared.is_dead:
+        time.sleep(WAIT_TIME)
+        current_position = clean_coordinates(capture_map_coordinates())
+        print(f"Posición actual: {current_position}")
+        print(PHOENIX_ROUTES, "RUTA?")
+
+        if current_position in PHOENIX_ROUTES:
+            phoenix_route = PHOENIX_ROUTES[current_position]
+            print("Ya en la posición del Fénix. Iniciando proceso de revivir...")
+
+            for move in phoenix_route["movements"]:
+                change_map(move)
+                time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
+
+            phoenix_button_x = phoenix_route["phoenix_button_x"]
+            phoenix_button_y = phoenix_route["phoenix_button_y"]
+
+            pg.click(phoenix_button_x, phoenix_button_y)
+            print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
+            config_shared.is_dead = False  # Restablecer bandera de muerto a False
+            print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
+        else:
+            if current_position in PHOENIX_ROUTES:
+                print("Moviéndose al Fénix desde la posición actual...")
+                phoenix_route = PHOENIX_ROUTES[current_position]
+                for move in phoenix_route["movements"]:
+                    change_map(move)
+                    time.sleep(WAIT_TIME)
+                    current_position = clean_coordinates(capture_map_coordinates())
+                    print(f"Posición actualizada: {current_position}")
+                    if current_position in PHOENIX_ROUTES:
+                        handle_revive()  # Llamada recursiva para manejar el proceso de revivir desde la nueva posición
+                        return
+            else:
+                print(f"La posición actual {current_position} no coincide con ninguna ruta de Fénix. No se realizará movimiento.")
+    else:
+        print("Personaje no está muerto. No se necesita revivir.")
+
+
 //////////////
 characters_tracking.py:
 import os
@@ -644,23 +666,6 @@ def capture_combat_map_frame():
     frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
     return frame
 
-def find_zaap_and_click():
-    """
-    Busca un zaap en la pantalla y hace clic en él si se encuentra.
-    """
-    for zaap_image in os.listdir(ZAAP_IMAGES_DIR):
-        zaap_path = os.path.join(ZAAP_IMAGES_DIR, zaap_image)
-        try:
-            location = pg.locateCenterOnScreen(zaap_path, confidence=CONFIDENCE_LEVEL)
-            if location:
-                pg.click(location)
-                time.sleep(WAIT_TIME)
-                return True
-        except pg.ImageNotFoundException:
-            continue  # Si no se encuentra la imagen, pasa a la siguiente
-        except Exception as e:
-            print(f"Error al buscar el zaap en {zaap_path}: {e}")
-    return False
 
 def pause_and_validate_mouse_position():
     """Pausa la ejecución y muestra la posición actual del mouse para validación."""
@@ -677,7 +682,7 @@ def detect_and_click_exit_combat():
         print(f"Click en botón de rendirse en las coordenadas ({exit_button_x}, {exit_button_y}).")
         pause_and_validate_mouse_position()
 
-        time.sleep(1)  # Espera un momento para que aparezca el cuadro de confirmación
+        time.sleep(2)  # Espera un momento para que aparezca el cuadro de confirmación
 
         confirm_button_x = 940  # Ajustar según sea necesario
         confirm_button_y = 580  # Ajustar según sea necesario
@@ -686,7 +691,7 @@ def detect_and_click_exit_combat():
         print(f"Click en botón 'Ok' en las coordenadas ({confirm_button_x}, {confirm_button_y}).")
         pause_and_validate_mouse_position()
 
-        time.sleep(1)
+        time.sleep(2)
 
         # Verificar si aparece el cuadro de diálogo de muerte en toda la pantalla
         death_dialog_location = pg.locateCenterOnScreen('ojoIA/death_dialog.png', confidence=0.3)
@@ -702,7 +707,7 @@ def detect_and_click_exit_combat():
             print("No se detectó el cuadro de diálogo de muerte, siguiendo flujo de derrota normal.")
         
         
-        time.sleep(1)
+        time.sleep(2)
 
         close_button_x = 950  # Ajustar según sea necesario
         close_button_y = 630  # Ajustar según sea necesario
@@ -730,7 +735,7 @@ def ocr_read_text(image_path, lang='eng'):
     except Exception as e:
         print(f"Error al leer texto de la imagen con OCR: {e}")
         return ""
-
+        
 //////////////
 
 navigation.py:
@@ -841,6 +846,11 @@ def teleport_to_closest_zaap(current_position, target_position):
     if current_position == '12,12':
         sorted_zaaps_to_current = [zaap for zaap in sorted_zaaps_to_current if clean_coordinates(zaap[0]) != '10,22']
         print("Excepción de Zaap detectada: Ignorando Zaap 10,22 desde la posición 12,12.")
+    
+    if current_position == '-16,36':
+        pg.press('3')
+        sorted_zaaps_to_current = [zaap for zaap in sorted_zaaps_to_current if clean_coordinates(zaap[0]) != '-26,37']
+        print("Excepción de Zaap detectada: Ignorando Zaap -26,37' desde la posición -16,36.") 
 
     if not sorted_zaaps_to_current:
         print("No se encontraron Zaaps adecuados después de aplicar las excepciones. Moviéndose normalmente.")
@@ -1036,6 +1046,8 @@ def check_route_exceptions(current_position, target_position):
         new_x, new_y = map(int, clean_coordinates(new_position).split(','))
         return new_x, new_y, True  # Retornar la nueva posición y un indicador de que se aplicó una excepción  
     
+    
+    
     return None, None, False
 
 # navigation.py
@@ -1047,7 +1059,7 @@ def check_route_exceptions(current_position, target_position):
 //////////////
 resource_management.py:
 import pyautogui as pg
-from modules.combat import check_combat_status, is_in_combat, revive_if_dead
+from modules.combat import check_combat_status, is_in_combat, handle_revive
 from modules.navigation import change_map, move_to_position, teleport_to_closest_zaap
 from modules.image_processing import capture_map_coordinates
 import time
@@ -1164,7 +1176,7 @@ def search_and_collect_resources(auto_surrender=False):
     if auto_surrender and is_in_combat():
         print("Detectado en combate, iniciando secuencia de rendición...")
         check_combat_status(auto_surrender)
-        revive_if_dead()  # Revisar si el personaje está muerto y revivir si es necesario
+        handle_revive()  # Revisar si el personaje está muerto y revivir si es necesario
         search_resources(True)
     
     return True
@@ -1352,7 +1364,17 @@ SCREENSHOT_SIZE = 100
 MOVEMENTS_TO_PHOENIX_SKELETON = ["right", "right", "right", "right", "up", "up", "up", "up", "left"]
 
 MOVEMENTS_TO_PHOENIX_STROPAJO = ["right", "right", "right", "right", "up",  "right"]
+
+MOVEMENTS_TO_PHOENIX_BRAK = ["right", "up", "up", "up", "up", "up"]
+
+MOVEMENTS_TO_PHOENIX_BONTA=["left"]
+
 PHOENIX_ROUTES = {
+     "-9,-54": {
+        "movements": MOVEMENTS_TO_PHOENIX_BONTA,
+        "phoenix_button_x":  910,
+        "phoenix_button_y": 520
+    },
     "9,16": {
         "movements": MOVEMENTS_TO_PHOENIX_SKELETON,  # Ejemplo de movimientos
         "phoenix_button_x": 620,
@@ -1362,7 +1384,14 @@ PHOENIX_ROUTES = {
         "movements": MOVEMENTS_TO_PHOENIX_STROPAJO,
         "phoenix_button_x": 820,
         "phoenix_button_y": 520
-    }
+    },
+    "17,41": {
+        "movements": MOVEMENTS_TO_PHOENIX_BRAK,
+        "phoenix_button_x": 1220,
+        "phoenix_button_y": 170
+    },
+   
+    
 }
 # Rutas de Zaaps
 ZAAPS = [
@@ -1373,19 +1402,23 @@ ZAAPS = [
 ]
 # Tipos de recursos y sus categorías
 RESOURCES_TYPE = {
+    "water": "water",
     "trigo": "cereals",
     "cebada": "cereals",
     "avena": "cereals",
     "castano": "wood",
     "arce": "wood",
     "bombu": "wood",
+    "olivio": "wood",
     "roble": "wood",
     "fresno": "wood",
     "nogal": "wood",
     "hierro": "minerals",
     "ortiga": "herbage",
     "salvia": "herbage",
-    "trebol": "herbage"
+    "trebol": "herbage",
+    "menta": "herbage",
+    
 }
 
 # Rutas a imágenes específicas de recursos
@@ -1401,13 +1434,19 @@ RESOURCE_PATHS = {
         "cebada": [
             "ojoIA/resources/cereals/cebada1.PNG",
             "ojoIA/resources/cereals/cebada2.PNG",
-            "ojoIA/resources/cereals/cebada3.PNG"
+            "ojoIA/resources/cereals/cebada3.PNG",
+            "ojoIA/resources/cereals/cebada4.PNG",           
+            "ojoIA/resources/cereals/cebada5.PNG",
+            "ojoIA/resources/cereals/cebada6.PNG"
+            
             
         ],
         "avena": [
-            "ojoIA/resources/cereals/avena1.PNG"
-            "ojoIA/resources/cereals/avena2.PNG"            
-            "ojoIA/resources/cereals/avena3.PNG"
+            "ojoIA/resources/cereals/avena1.PNG",
+            "ojoIA/resources/cereals/avena2.PNG",            
+            "ojoIA/resources/cereals/avena3.PNG",
+            "ojoIA/resources/cereals/avena4.PNG",
+            "ojoIA/resources/cereals/avena5.PNG"
             
         ]
     },
@@ -1456,10 +1495,24 @@ RESOURCE_PATHS = {
             "ojoIA/resources/wood/bombu3.PNG",
             "ojoIA/resources/wood/bombu4.PNG",
             "ojoIA/resources/wood/bombu5.PNG",
-            "ojoIA/resources/wood/bombu6.PNG"
+            "ojoIA/resources/wood/bombu6.PNG",
             "ojoIA/resources/wood/bombu7.PNG",
             "ojoIA/resources/wood/bombu8.PNG"
-        ]
+        ],
+        "olivio": [
+            "ojoIA/resources/wood/olivio1.PNG",
+            "ojoIA/resources/wood/olivio2.PNG",
+            "ojoIA/resources/wood/olivio3.PNG",
+            "ojoIA/resources/wood/olivio4.PNG",
+            "ojoIA/resources/wood/olivio5.PNG",
+            "ojoIA/resources/wood/olivio6.PNG",
+            "ojoIA/resources/wood/olivio7.PNG",
+            "ojoIA/resources/wood/olivio8.PNG",
+            
+            
+            
+            
+        ],
         
     },
     "herbage": {
@@ -1477,8 +1530,22 @@ RESOURCE_PATHS = {
         "trebol": [
             "ojoIA/resources/herbage/trebol1.PNG",
             "ojoIA/resources/herbage/trebol2.PNG"
+        ],
+         "menta": [
+            "ojoIA/resources/herbage/menta1.PNG",
         ]
+    },
+    "water":{
+        "water": [
+                "ojoIA/resources/water/water1.PNG",
+                "ojoIA/resources/water/water2.PNG",
+                "ojoIA/resources/water/water3.PNG",
+                "ojoIA/resources/water/water4.PNG",
+                "ojoIA/resources/water/water5.PNG",
+                "ojoIA/resources/water/water6.PNG"      
+            ],
     }
+    
 }
 
 # Regiones de captura de pantalla para detectar tooltips y otros indicadores
@@ -1534,6 +1601,21 @@ DIRECTION_PATH_BOMBU = [
     "right", "right", "down", "left", "down", "right", "down", "down", "down",
     "right", "up", "up", "right", "up", "up", "up", "left"
 ]
+DIRECTION_PATH_OLIVIO = [
+    "left", "left", "up", "right", "right", "down", "down", "down", "right", "down",
+    "right", "down", "right", "up", "up", "up", "up", "left", "up", "up", "left",
+    "left", "up", "right", "up", "left", "left", "up", "up", "right", "right", "up",
+    "left", "up", "left", "left", "up", "right"
+]
+
+DIRECTION_PATH_WATER = [
+    "right", "up", "up", "left", "left", "left", "up", "up", "left", "up", "up", "up",
+    "right", "up", "up", "right", "up", "right", "up", "left", "left", "left", "left",
+    "left", "left", "down", "left", "left", "up", "up", "right", "up", "right", "down", "right",
+    "right", "right", "right", "right", "right", "down", "right", 
+    "up", "up", "up", "right", "right", "right", "down", "down", 
+    "down", "down", "down"
+]
 
 # Región de detección de zaaps (toda la pantalla)
 ZAAP_DETECTION_REGION = (0, 0, 1920, 1080)
@@ -1580,7 +1662,9 @@ PREDEFINED_POSITIONS = {
     "-11,-8": DIRECTION_PATH_ROBLE,
     "3,21": DIRECTION_PATH_TREBOL,
     "2,31":DIRECTION_PATH_ARCE,
-    "-13,-28": DIRECTION_PATH_BOMBU
+    "-13,-28": DIRECTION_PATH_BOMBU,
+    "-25,12":DIRECTION_PATH_OLIVIO,
+    "-27,-36": DIRECTION_PATH_WATER
 }
 
 /////////////////
@@ -1589,7 +1673,7 @@ Y el centro de todo
 main.py :
 # main.py
 
-from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time,handle_revival
+from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time,handle_revive
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
 from modules.characters_tracking import load_character_templates, detect_character, click_on_character, track_and_click_character
@@ -1659,7 +1743,7 @@ def main():
 
         if user_choice == '1':
             search_resources(auto_surrender)
-            handle_revival()
+            handle_revive()
         elif user_choice == '2':
             searchMob()
         elif user_choice == '3':
@@ -1668,7 +1752,7 @@ def main():
             initiate_combat_sequence()
         elif user_choice == '5':
             config_shared.is_dead = True
-            handle_revival()
+            handle_revive()
         elif user_choice == '6':
             interact_with_gpt4()
         elif user_choice == '7':

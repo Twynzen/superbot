@@ -1,6 +1,6 @@
 # main.py
 
-from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time,handle_revival
+from modules.combat import searchMob, initiate_combat_sequence, detect_objects_in_real_time,handle_revive
 from modules.resource_management import search_resources
 from modules.image_processing import capture_map_coordinates, capture_current_game_frame
 from modules.characters_tracking import load_character_templates, detect_character, click_on_character, track_and_click_character
@@ -70,7 +70,7 @@ def main():
 
         if user_choice == '1':
             search_resources(auto_surrender)
-            handle_revival()
+            handle_revive()
         elif user_choice == '2':
             searchMob()
         elif user_choice == '3':
@@ -79,7 +79,7 @@ def main():
             initiate_combat_sequence()
         elif user_choice == '5':
             config_shared.is_dead = True
-            handle_revival()
+            handle_revive()
         elif user_choice == '6':
             interact_with_gpt4()
         elif user_choice == '7':

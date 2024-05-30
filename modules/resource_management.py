@@ -1,5 +1,5 @@
 import pyautogui as pg
-from modules.combat import check_combat_status, is_in_combat, revive_if_dead
+from modules.combat import check_combat_status, is_in_combat, handle_revive
 from modules.navigation import change_map, move_to_position, teleport_to_closest_zaap
 from modules.image_processing import capture_map_coordinates
 import time
@@ -116,7 +116,7 @@ def search_and_collect_resources(auto_surrender=False):
     if auto_surrender and is_in_combat():
         print("Detectado en combate, iniciando secuencia de rendición...")
         check_combat_status(auto_surrender)
-        revive_if_dead()  # Revisar si el personaje está muerto y revivir si es necesario
+        handle_revive()  # Revisar si el personaje está muerto y revivir si es necesario
         search_resources(True)
     
     return True

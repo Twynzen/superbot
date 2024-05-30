@@ -26,7 +26,17 @@ SCREENSHOT_SIZE = 100
 MOVEMENTS_TO_PHOENIX_SKELETON = ["right", "right", "right", "right", "up", "up", "up", "up", "left"]
 
 MOVEMENTS_TO_PHOENIX_STROPAJO = ["right", "right", "right", "right", "up",  "right"]
+
+MOVEMENTS_TO_PHOENIX_BRAK = ["right", "up", "up", "up", "up", "up"]
+
+MOVEMENTS_TO_PHOENIX_BONTA=["left"]
+
 PHOENIX_ROUTES = {
+     "-9,-54": {
+        "movements": MOVEMENTS_TO_PHOENIX_BONTA,
+        "phoenix_button_x":  910,
+        "phoenix_button_y": 520
+    },
     "9,16": {
         "movements": MOVEMENTS_TO_PHOENIX_SKELETON,  # Ejemplo de movimientos
         "phoenix_button_x": 620,
@@ -36,7 +46,14 @@ PHOENIX_ROUTES = {
         "movements": MOVEMENTS_TO_PHOENIX_STROPAJO,
         "phoenix_button_x": 820,
         "phoenix_button_y": 520
-    }
+    },
+    "17,41": {
+        "movements": MOVEMENTS_TO_PHOENIX_BRAK,
+        "phoenix_button_x": 1220,
+        "phoenix_button_y": 170
+    },
+   
+    
 }
 # Rutas de Zaaps
 ZAAPS = [
@@ -47,19 +64,23 @@ ZAAPS = [
 ]
 # Tipos de recursos y sus categorías
 RESOURCES_TYPE = {
+    "water": "water",
     "trigo": "cereals",
     "cebada": "cereals",
     "avena": "cereals",
     "castano": "wood",
     "arce": "wood",
     "bombu": "wood",
+    "olivio": "wood",
     "roble": "wood",
     "fresno": "wood",
     "nogal": "wood",
     "hierro": "minerals",
     "ortiga": "herbage",
     "salvia": "herbage",
-    "trebol": "herbage"
+    "trebol": "herbage",
+    "menta": "herbage",
+    
 }
 
 # Rutas a imágenes específicas de recursos
@@ -75,13 +96,19 @@ RESOURCE_PATHS = {
         "cebada": [
             "ojoIA/resources/cereals/cebada1.PNG",
             "ojoIA/resources/cereals/cebada2.PNG",
-            "ojoIA/resources/cereals/cebada3.PNG"
+            "ojoIA/resources/cereals/cebada3.PNG",
+            "ojoIA/resources/cereals/cebada4.PNG",           
+            "ojoIA/resources/cereals/cebada5.PNG",
+            "ojoIA/resources/cereals/cebada6.PNG"
+            
             
         ],
         "avena": [
-            "ojoIA/resources/cereals/avena1.PNG"
-            "ojoIA/resources/cereals/avena2.PNG"            
-            "ojoIA/resources/cereals/avena3.PNG"
+            "ojoIA/resources/cereals/avena1.PNG",
+            "ojoIA/resources/cereals/avena2.PNG",            
+            "ojoIA/resources/cereals/avena3.PNG",
+            "ojoIA/resources/cereals/avena4.PNG",
+            "ojoIA/resources/cereals/avena5.PNG"
             
         ]
     },
@@ -130,10 +157,24 @@ RESOURCE_PATHS = {
             "ojoIA/resources/wood/bombu3.PNG",
             "ojoIA/resources/wood/bombu4.PNG",
             "ojoIA/resources/wood/bombu5.PNG",
-            "ojoIA/resources/wood/bombu6.PNG"
+            "ojoIA/resources/wood/bombu6.PNG",
             "ojoIA/resources/wood/bombu7.PNG",
             "ojoIA/resources/wood/bombu8.PNG"
-        ]
+        ],
+        "olivio": [
+            "ojoIA/resources/wood/olivio1.PNG",
+            "ojoIA/resources/wood/olivio2.PNG",
+            "ojoIA/resources/wood/olivio3.PNG",
+            "ojoIA/resources/wood/olivio4.PNG",
+            "ojoIA/resources/wood/olivio5.PNG",
+            "ojoIA/resources/wood/olivio6.PNG",
+            "ojoIA/resources/wood/olivio7.PNG",
+            "ojoIA/resources/wood/olivio8.PNG",
+            
+            
+            
+            
+        ],
         
     },
     "herbage": {
@@ -151,8 +192,22 @@ RESOURCE_PATHS = {
         "trebol": [
             "ojoIA/resources/herbage/trebol1.PNG",
             "ojoIA/resources/herbage/trebol2.PNG"
+        ],
+         "menta": [
+            "ojoIA/resources/herbage/menta1.PNG",
         ]
+    },
+    "water":{
+        "water": [
+                "ojoIA/resources/water/water1.PNG",
+                "ojoIA/resources/water/water2.PNG",
+                "ojoIA/resources/water/water3.PNG",
+                "ojoIA/resources/water/water4.PNG",
+                "ojoIA/resources/water/water5.PNG",
+                "ojoIA/resources/water/water6.PNG"      
+            ],
     }
+    
 }
 
 # Regiones de captura de pantalla para detectar tooltips y otros indicadores
@@ -208,6 +263,21 @@ DIRECTION_PATH_BOMBU = [
     "right", "right", "down", "left", "down", "right", "down", "down", "down",
     "right", "up", "up", "right", "up", "up", "up", "left"
 ]
+DIRECTION_PATH_OLIVIO = [
+    "left", "left", "up", "right", "right", "down", "down", "down", "right", "down",
+    "right", "down", "right", "up", "up", "up", "up", "left", "up", "up", "left",
+    "left", "up", "right", "up", "left", "left", "up", "up", "right", "right", "up",
+    "left", "up", "left", "left", "up", "right"
+]
+
+DIRECTION_PATH_WATER = [
+    "right", "up", "up", "left", "left", "left", "up", "up", "left", "up", "up", "up",
+    "right", "up", "up", "right", "up", "right", "up", "left", "left", "left", "left",
+    "left", "left", "down", "left", "left", "up", "up", "right", "up", "right", "down", "right",
+    "right", "right", "right", "right", "right", "down", "right", 
+    "up", "up", "up", "right", "right", "right", "down", "down", 
+    "down", "down", "down"
+]
 
 # Región de detección de zaaps (toda la pantalla)
 ZAAP_DETECTION_REGION = (0, 0, 1920, 1080)
@@ -254,5 +324,7 @@ PREDEFINED_POSITIONS = {
     "-11,-8": DIRECTION_PATH_ROBLE,
     "3,21": DIRECTION_PATH_TREBOL,
     "2,31":DIRECTION_PATH_ARCE,
-    "-13,-28": DIRECTION_PATH_BOMBU
+    "-13,-28": DIRECTION_PATH_BOMBU,
+    "-25,12":DIRECTION_PATH_OLIVIO,
+    "-27,-36": DIRECTION_PATH_WATER
 }

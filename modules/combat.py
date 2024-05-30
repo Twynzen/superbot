@@ -5,13 +5,13 @@ import pytesseract
 import numpy as np
 from modules.navigation import change_map, clean_coordinates
 from modules.image_processing import capture_screenshot, image_difference, capture_and_process_image
-from config import PHOENIX_ROUTES, COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION, MOVEMENTS_TO_PHOENIX_SKELETON
+from config import PHOENIX_ROUTES, COMBAT_MODE_REGION, DIRECTION_PATH_ABSTRUB_ZAAP,  MAP_LOCATION_DIR, WAIT_TIME, PLAYER_NAME, PLAYER_DATA_REGION, BOARD_REGION, GAME_SCREEN_REGION
 from modules.image_processing import capture_map_coordinates, capture_combat_map_frame, detect_map_edges, detect_and_click_exit_combat
 import torch
 from ultralytics import YOLO
 import mss
 import random
-import config_shared 
+import config_shared  
 
 class_colors = {}
 #termina de ajustar ruta a fenix
@@ -294,45 +294,24 @@ def is_in_combat():
     except Exception as e:
         print(f"Error al intentar detectar si estamos en combate: {e}")
     return False
-
-def revive_if_dead():
-    if config_shared.is_dead:
-        time.sleep(WAIT_TIME)
-        current_position = clean_coordinates(capture_map_coordinates()) 
-        print(current_position,"POSICION DE INICIO DE FENIX")
-        if current_position in PHOENIX_ROUTES:
-            print(f"Iniciando secuencia para revivir en el Fénix desde la posición {current_position}...")
-            route_info = PHOENIX_ROUTES[current_position]
-            
-            for move in route_info["movements"]:
-                change_map(move)
-                time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
-
-            phoenix_button_x = route_info["phoenix_button_x"]
-            phoenix_button_y = route_info["phoenix_button_y"]
-
-            pg.click(phoenix_button_x, phoenix_button_y)
-            print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
-            print("Posición actual no es 9,16, reanudando recolección de recursos...")
-        config_shared.is_dead = False  # Restablecer bandera de muerto a False
-        print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
-    else:
-        print("Personaje no está muerto, reanudando recolección de recursos...")
-        
-def handle_revival():
+def handle_revive():
     """Maneja el flujo de revivir al Fénix desde cualquier ubicación."""
     if config_shared.is_dead:
         time.sleep(WAIT_TIME)
         current_position = clean_coordinates(capture_map_coordinates())
         print(f"Posición actual: {current_position}")
-        if current_position == "9,16":
+        print(PHOENIX_ROUTES, "RUTA?")
+
+        if current_position in PHOENIX_ROUTES:
+            phoenix_route = PHOENIX_ROUTES[current_position]
             print("Ya en la posición del Fénix. Iniciando proceso de revivir...")
-            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+
+            for move in phoenix_route["movements"]:
                 change_map(move)
                 time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
 
-            phoenix_button_x = 620  # Ajustar según sea necesario
-            phoenix_button_y = 250  # Ajustar según sea necesario
+            phoenix_button_x = phoenix_route["phoenix_button_x"]
+            phoenix_button_y = phoenix_route["phoenix_button_y"]
 
             pg.click(phoenix_button_x, phoenix_button_y)
             print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
@@ -340,13 +319,55 @@ def handle_revival():
             print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
         else:
             print("Moviéndose al Fénix desde la posición actual...")
-            for move in MOVEMENTS_TO_PHOENIX_SKELETON:
+            for route_key in PHOENIX_POSITIONS:
+                if route_key in current_position:
+                    phoenix_route = PHOENIX_ROUTES[route_key]
+                    for move in phoenix_route["movements"]:
+                        change_map(move)
+                        time.sleep(WAIT_TIME)
+                        current_position = clean_coordinates(capture_map_coordinates())
+                        print(f"Posición actualizada: {current_position}")
+                        if current_position in PHOENIX_ROUTES:
+                            handle_revive()  # Llamada recursiva para manejar el proceso de revivir desde la nueva posición
+                            return
+    else:
+        print("Personaje no está muerto. No se necesita revivir.")
+def handle_revive():
+    """Maneja el flujo de revivir al Fénix desde cualquier ubicación."""
+    if config_shared.is_dead:
+        time.sleep(WAIT_TIME)
+        current_position = clean_coordinates(capture_map_coordinates())
+        print(f"Posición actual: {current_position}")
+        print(PHOENIX_ROUTES, "RUTA?")
+
+        if current_position in PHOENIX_ROUTES:
+            phoenix_route = PHOENIX_ROUTES[current_position]
+            print("Ya en la posición del Fénix. Iniciando proceso de revivir...")
+
+            for move in phoenix_route["movements"]:
                 change_map(move)
-                time.sleep(WAIT_TIME)
-                current_position = clean_coordinates(capture_map_coordinates())
-                print(f"Posición actualizada: {current_position}")
-                if current_position == "9,16":
-                    break
-            handle_revival()  # Llamada recursiva para manejar el proceso de revivir desde "9,16"
+                time.sleep(3)  # Ajustar el tiempo de espera según sea necesario
+
+            phoenix_button_x = phoenix_route["phoenix_button_x"]
+            phoenix_button_y = phoenix_route["phoenix_button_y"]
+
+            pg.click(phoenix_button_x, phoenix_button_y)
+            print(f"Click en botón de revivir en el Fénix en las coordenadas ({phoenix_button_x}, {phoenix_button_y}).")
+            config_shared.is_dead = False  # Restablecer bandera de muerto a False
+            print("Personaje ha revivido. Actualizando config_shared.is_dead a False.")
+        else:
+            if current_position in PHOENIX_ROUTES:
+                print("Moviéndose al Fénix desde la posición actual...")
+                phoenix_route = PHOENIX_ROUTES[current_position]
+                for move in phoenix_route["movements"]:
+                    change_map(move)
+                    time.sleep(WAIT_TIME)
+                    current_position = clean_coordinates(capture_map_coordinates())
+                    print(f"Posición actualizada: {current_position}")
+                    if current_position in PHOENIX_ROUTES:
+                        handle_revive()  # Llamada recursiva para manejar el proceso de revivir desde la nueva posición
+                        return
+            else:
+                print(f"La posición actual {current_position} no coincide con ninguna ruta de Fénix. No se realizará movimiento.")
     else:
         print("Personaje no está muerto. No se necesita revivir.")
