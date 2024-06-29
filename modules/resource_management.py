@@ -10,7 +10,7 @@ from config import RESOURCE_PATHS, CONFIDENCE_LEVEL, WAIT_TIME, RESOURCES_TYPE,D
 
 EXCEPTIONS = {
         'fresno': {
-            'ignored_positions': [(1465, 862)],  # Lista de posiciones a ignorar
+            'ignored_positions': [(1465, 863)],  # Lista de posiciones a ignorar
         },
          'arce': {
             'ignored_positions': [(1537, 152)],  # Lista de posiciones a ignorar

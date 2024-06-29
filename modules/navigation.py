@@ -90,6 +90,12 @@ def get_sorted_zaaps_by_distance(position):
 def check_zaap_route_exceptions(current_position, target_zaap):
     if current_position == '12,12' and target_zaap == '10,22':
         print("Excepción de Zaap detectada: Ignorando Zaap 10,22 desde la posición 12,12.")
+        return True  # Indica que esta excepción aplica y debe ser ignorada.
+    if target_zaap == '1,-32':
+        print("Excepción de Zaap detectada: Ignorando Zaap 1,-32 Tainela")
+        return True  # Indica que esta excepción aplica y debe ser ignorada
+    if current_position == '-7,-33' and target_zaap == '-13,-28':
+        print("Excepción de Zaap detectada: Ignorando Zaap -13,-28")
         return True  # Indica que esta excepción aplica y debe ser ignorada
     return False
 
@@ -123,7 +129,7 @@ def teleport_to_closest_zaap(current_position, target_position):
     print("Zaaps ordenados por cercanía desde la posición de destino:")
     for zaap, distance in sorted_zaaps_to_target:
         zaap_name = get_zaap_name_by_coordinates(zaap)
-        #print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
+        print(f"{zaap} ({zaap_name}) - Distancia: {distance}")
 
     closest_zaap_to_target = sorted_zaaps_to_target[0][0]  # El más cercano
 
@@ -190,6 +196,7 @@ def try_alternate_directions(current_x, current_y, target_x, target_y):
     return f"{current_x},{current_y}"  # Retorna la misma posición si no se logró mover
 
 
+
 def move_to_position(target_position):
     global previous_position
     target_x, target_y = map(int, clean_coordinates(target_position).split(','))
@@ -203,7 +210,11 @@ def move_to_position(target_position):
             continue
 
         current_x, current_y = map(int, clean_coordinates(current_position).split(','))
-        
+
+        # Inicializar el conjunto si la clave no existe
+        if (current_x, current_y) not in failed_moves_registry:
+            failed_moves_registry[(current_x, current_y)] = set()
+
         # Comprobar excepciones de ruta
         new_x, new_y, exception_applied = check_route_exceptions(f"{current_x},{current_y}", target_position)
         if exception_applied:
@@ -254,7 +265,7 @@ def move_to_position(target_position):
                 new_x, new_y = map(int, clean_coordinates(new_position).split(','))
                 if new_x == current_x and new_y == current_y:
                     print("No se pudo mover después de intentar rutas alternativas. Reintentando...")
-                    failed_attempts = 0  # Resetear los intentos fallidos pa
+                    failed_attempts = 0  # Resetear los intentos fallidos para intentar nuevamente.
 
 def check_route_exceptions(current_position, target_position):
     if current_position == '-6,-9' and target_position == '-11,-8':

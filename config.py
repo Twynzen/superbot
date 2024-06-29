@@ -68,6 +68,7 @@ RESOURCES_TYPE = {
     "trigo": "cereals",
     "cebada": "cereals",
     "avena": "cereals",
+    "lupulo":"cereals",
     "castano": "wood",
     "arce": "wood",
     "bombu": "wood",
@@ -110,7 +111,17 @@ RESOURCE_PATHS = {
             "ojoIA/resources/cereals/avena4.PNG",
             "ojoIA/resources/cereals/avena5.PNG"
             
-        ]
+        ],
+        "lupulo": [
+            "ojoIA/resources/cereals/lupulo1.PNG",
+            "ojoIA/resources/cereals/lupulo2.PNG",
+            "ojoIA/resources/cereals/lupulo3.PNG",
+            "ojoIA/resources/cereals/lupulo4.PNG",           
+            "ojoIA/resources/cereals/lupulo5.PNG",
+            "ojoIA/resources/cereals/lupulo6.PNG"
+            
+            
+        ],
     },
        #"minerals": {
     #    "hierro": [
@@ -230,8 +241,8 @@ PLAYER_DATA_REGION = (715, 900, 120, 140)
 SCREENSHOT_DIR = os.path.join("ojoIA", "screenshots")
 
 # Nivel de confianza para la detección de imágenes
-CONFIDENCE_LEVEL = 0.7
-
+CONFIDENCE_LEVEL = 0.8
+ 
 # Definición de las rutas para direcciones específicas
 DIRECTION_PATH_ABSTRUB_ZAAP = [
     'left', 'left', 'down', 'right', 'right', 'right', 'up', 'up', 'left', 'left',
@@ -290,7 +301,6 @@ ZAAP_LOCATIONS = [
     {"nombre": "Isla Zanahowia", "coordenadas": "25,-4", "región": "Archipiélago Wabbit"},
     {"nombre": "Laboratorios abandonados", "coordenadas": "27,-14", "región": "Archipiélago Wabbit"},
     {"nombre": "Tainela", "coordenadas": "1,-32", "región": "Astrub"},
-    {"nombre": "Ribera del golfo sufokeño", "coordenadas": "10,22", "región": "Bahía de Sufokia"},
     {"nombre": "Sufokia", "coordenadas": "13,26", "región": "Bahía de Sufokia"},
     {"nombre": "Corazón Inmaculado", "coordenadas": "-31,-56", "región": "Bonta"},
     {"nombre": "Coraza", "coordenadas": "-26,37", "región": "Brakmar"},
